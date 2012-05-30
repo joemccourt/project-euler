@@ -25,7 +25,7 @@ function isPrime(number){
 var nMax = 0;
 var ab = 0;
 for(var a = -999; a < 1000; a++){
-	for(var b = -999; b < 1000; b++){
+	for(var b = a; b < 1000; b++){
 		var n = 1;
 		while(isPrime(n*n+a*n+b)){
 			n++;
