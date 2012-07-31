@@ -13,7 +13,6 @@ function numDigits(n){
 	return String(n).length;
 }
 
-//Assumes no repeating characters
 function isAnagram(str1, str2){
 	if(str1.length != str2.length){return false;}
 
