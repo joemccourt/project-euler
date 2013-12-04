@@ -135,10 +135,50 @@
 // 1,1,1,1,1,1: 11111
 
 
-var p = function(n){
-	return 0;
-};
+//Brute force plus memoiziation
+var limit = 1000000;
+var mem = {};
 
-for(var i = 0; i < 10; i++){
-	console.log(i,p(i));
-}
+var p = function(n,max,lvl){
+	var sum = 0;
+	console.log(lvl+n+","+max);
+	if(max == 1 || max == 0){return 1;}
+	
+	if(max == n){
+
+	}
+
+	// var m = mem[n*100000 + max];
+	// if(m){return m;}
+
+	for(var i = max; i > 0; i--){
+		var newMax = i;
+		if(n-i < newMax){newMax = n-i;}
+		sum += p(n-i,newMax,lvl+" ");
+		sum %= limit;
+	}
+
+	mem[n*100000 + max] = sum;
+	return sum;
+};
+	var numWays = p(5,5,"");
+
+// for(var i = 0; i <= 20; i++){
+// 	var numWays = p(i,i);
+
+// 	console.log(i,numWays);
+// 	if(numWays == 0){
+// 		break;
+// 	}
+// }
+
+// print memo
+// for(var y = 1; y < 25; y++){
+// 	var log = "";
+// 	for(var x = 1; x < 25; x++){
+// 		var val = mem[y*100000+x];
+// 		if(!val){val = ".";}
+// 		log += val+"\t";
+// 	}
+// 	console.log(log);
+// }
