@@ -199,6 +199,7 @@ var minIndex = 11765;
 // console.log(n.value,n.vec); //139885119141768000 [ 6, 4, 3, 2, 2, 2, 1, 1, 1, 1 ]
 
 //18860 139885119141768000 4146188
+//13801 9350130049860600 4018613
 for(var nIndex = minIndex; nIndex < nArray.length; nIndex++) {
 	var n = nArray[nIndex];
 	// var solutions = numSolutions(n);
