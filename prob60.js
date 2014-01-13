@@ -48,6 +48,7 @@ var searchSet = function(set,index) {
 				var concat2 = parseInt(primes[set[i]].toString() + primes[set[j]].toString(),10);
 
 				if(!isPrime(concat1) || !isPrime(concat2)) {
+				// if(primePairsSet[set[i]][set[j]] || primePairsSet[set[j]][set[i]]) {
 					validSet = false;
 					break;
 				}
@@ -95,5 +96,101 @@ var searchSet = function(set,index) {
 	}
 }
 
-var set = [0,1,2,3,4];
+// *** Now let's try making a faster version :) *** //
+var primePairs = [];
+var primePairsSet = [];
+var primeTris = [];
+var primeQuads = [];
+
+// Precalc pairs that fit concat property
+var memoPairs = function() {
+	for(var i = 0; i < maxPrimeI; i++) {
+		primePairs[i] = [];
+		primePairsSet[i] = {};
+		for(var j = i; j < maxPrimeI; j++) {
+			var concat1 = parseInt(primes[j].toString() + primes[i].toString(),10);
+			var concat2 = parseInt(primes[i].toString() + primes[j].toString(),10);
+
+			if(isPrime(concat1) && isPrime(concat2)) {
+				// console.log(concat1,concat2)
+				primePairs[i].push(j);
+				primePairsSet[i][j] = true;
+				//primePairs[primes[i]+'-'+primes[j]] = true;
+			}
+		}
+	}
+}
+
+var memoTris = function() {
+	for(var i = 0; i < primePairs.length; i++) {
+		var pairs = primePairs[i]; // i, [..]
+		primeTris[i] = [];
+		for(var j = 0; j < pairs.length; j++) {
+			//i, pairs[j], pairsJ[k]
+			var pairsJ = primePairs[pairs[j]];
+			for(var k = 0; k < pairsJ.length; k++) {
+				if(primePairsSet[i][pairsJ[k]]) {
+					// console.log(i,pairs[j],pairsJ[k]);
+					//console.log(primes[i],primes[pairs[j]],primes[pairsJ[k]]);
+					primeTris[i].push([pairs[j],pairsJ[k]]);
+				}
+			}
+		}
+	}
+};
+
+var memoQuads = function() {
+	for(var i = 0; i < primeTris.length; i++) {
+		var tris = primeTris[i];
+		primeQuads[i] = [];
+		for(var j = 0; j < tris.length; j++) {
+			//i, tris[j][0], tris[j][1], pairsJ1[k]
+			var pairsJ1 = primePairs[tris[j][1]];
+			for(var k = 0; k < pairsJ1.length; k++) {
+				if(primePairsSet[i][pairsJ1[k]] && primePairsSet[tris[j][0]][pairsJ1[k]]) {
+					//console.log(primes[i],primes[tris[j][0]],primes[tris[j][1]],primes[pairsJ1[k]]);
+					primeQuads[i].push([tris[j][0],tris[j][1],pairsJ1[k]]);
+				}
+			}
+		}
+	}
+};
+
+var searchQuints = function() {
+	for(var i = 0; i < primeQuads.length; i++) {
+		var quads = primeQuads[i];
+		primeQuads[i] = [];
+		for(var j = 0; j < quads.length; j++) {
+			//i, quads[j][0], quads[j][1], quads[j][2], pairsJ2[k]
+			var pairsJ2 = primePairs[quads[j][2]];
+			for(var k = 0; k < pairsJ2.length; k++) {
+				if(primePairsSet[i][pairsJ2[k]] && primePairsSet[quads[j][0]][pairsJ2[k]] && primePairsSet[quads[j][1]][pairsJ2[k]]) {
+					console.log(primes[i],primes[quads[j][0]],primes[quads[j][1]],primes[pairsJ2[k]]);
+				}
+			}
+		}
+	}
+};
+
+memoPairs();
+// memoTris();
+// memoQuads();
+// searchQuints();
+// memoN(3);
+
+
+// for(var i = 0; i < primePairs.length; i++) {
+// 	if(primePairs[i].length) {
+// 		for(var j = 0; j < primePairs[i].length; j++) {
+// 			console.log(primes[i],primes[primePairs[i][j]]);
+// 		}
+// 	}
+// }
+
+// console.log(primePairs[1][])
+// console.log(primePairs);
+// console.log(primeTris);
+// console.log(primeQuads);
+
+var set = [0,1,2,3];
 searchSet(set,0);
