@@ -172,7 +172,7 @@ var searchQuints = function() {
 	}
 };
 
-memoPairs();
+// memoPairs();
 // memoTris();
 // memoQuads();
 // searchQuints();
@@ -192,5 +192,5 @@ memoPairs();
 // console.log(primeTris);
 // console.log(primeQuads);
 
-var set = [0,1,2,3];
+var set = [0,1,2,3,4];
 searchSet(set,0);
