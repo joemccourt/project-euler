@@ -79,18 +79,26 @@ var roman2decimal = function(roman) {
 	var n = roman.length;
 	var sum = 0;
 	var i = 0;
+	var valid = true;
+	var lastD = 1;
 	while(i < n) {
 		var d = romanMap[roman[i]];
+		// console.log(d,lastD);
+		if(i != 0 && d > lastD) {
+			if(d == 5 && lastD != 1 || d == 10 && lastD != 1 || d == 50 && lastD != 10 || d == 100 && lastD != 10 || d == 500 && lastD != 100 || d == 1000 && lastD != 100) {
+				return -1; // Not valid
+			}
+		} else {
+			lastD = d;
+		}
+
 		if(i < n-1 && d < romanMap[roman[i+1]]) {
-			sum += romanMap[roman[i+1]] - d;
-			i+=2;
-		} else if(i < n-2 && d == romanMap[roman[i+1]] && d < romanMap[roman[i+2]]) {
-			sum += romanMap[roman[i+2]] - 2*d;
-			i+=3;
+			sum += - d;
 		} else {
 			sum += d;
-			i++;
 		}
+
+		i++;
 	}
 	return sum;
 };
@@ -130,12 +138,104 @@ var decimal2roman = function(num) {
 
 var reduceRoman = function(roman) {
 	var num = roman2decimal(roman);
-	var reduced = decimal2roman(num)
-	console.log(roman,num,reduced);
+	var reduced = minRoman[num];
+	if(!reduced) { console.log("Missing: ",num); return "I";}
+	// var reduced = decimal2roman(num)
+	// console.log(roman,num,reduced);
 	return reduced;
 };
 
+var minRoman = {};
+var count = 0;
+var genMinRomanAt = function(roman,index,max) {
+
+	var dec = roman2decimal(roman);
+	if(dec > max) {
+		return;
+	}
+
+	if(!minRoman[dec] || minRoman[dec].length > roman.length) {
+		minRoman[dec] = roman;
+	}
+
+	// if(roman2decimal(roman) <= 0) {return;}
+	// count++;
+	// console.log(roman,count,roman2decimal(roman));
+	for(var i = index; i < roman.length; i++) {
+		// var validateRoman = roman.substr(0,i);
+		// for(var k = i; k < roman.length; k++) {
+		// 	validateRoman += "I";
+		// }
+		if(roman2decimal(roman) <= 0) {continue;}
+
+		var r1 = roman.substr(0,i);
+		var r2 = roman.substr(i+1);
+
+		var jStart = letMap.indexOf(roman[i])-1;
+		var jArray = [6,5,4,3,2,1,0];
+		// if(i > 0) {
+		// 	var lastDigit = roman[i-1];
+		// 	if(lastDigit == "I") {
+		// 		jArray = [6,5,4];
+		// 	} else if(lastDigit == "V") {
+		// 		jArray = [6,5];
+		// 	} else if(lastDigit == "X") {
+		// 		jArray = [6,5,4,3,2];
+		// 	} else if(lastDigit == "L") {
+		// 		jArray = [6,5,4,3];
+		// 	} else if(lastDigit == "C") {
+		// 		jArray = [6,5,4,3,2,1,0];
+		// 	} else if(lastDigit == "D") {
+		// 		jArray = [6,5,4,3,2,1];
+		// 	} else if(lastDigit == "M") {
+		// 		jArray = [6,5,4,3,2,1,0];
+		// 	}
+		// }
+
+		//3256
+
+		for(var j = 0; j < jArray.length; j++) {
+
+			// var valid = false;
+			// if(newLetter == "I" && roman.length >= 2) {
+			// 	if(j == roman.length-1) {
+			// 		valid = true;
+			// 	} else if(roman[j+1] == "X" || roman[j+1] == "V") {
+
+			// 	}
+			// 	valid = true;
+			// } else if(true) {
+			// }
+			
+			var romanPass = r1 + letMap[j] + r2;
+			genMinRomanAt(romanPass,i+1,max);
+		}
+	}
+};
+
+var genMinRoman = function(n) {
+	for(var chars = 1; chars < 10; chars++) {
+		var str = "";
+		for(var i = 0; i < chars; i++) {
+			str += "I";
+		}
+		genMinRomanAt(str,0,n);
+	}
+
+	// Check completness to n
+	// for(var i = 1; i < n; i++) {
+	// 	if(!minRoman[i]) {
+	// 		console.log("Missing: ", i);
+	// 	}
+	// }
+	// genMinRomanAt("MMM",0);
+	// console.log(minRoman)
+};
+
 var solveProblem = function(data) {
+
+	genMinRoman(5000);
+
 	var n = data.length;
 	var save = 0;
 	for(var i = 0; i < n; i++) {
@@ -147,5 +247,6 @@ var solveProblem = function(data) {
 		// console.log(roman,reduced);
 	}
 	console.log(save);
+	// console.log(roman2decimal("IL"));
 	//console.log(data);
 };
