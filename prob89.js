@@ -81,13 +81,25 @@ var roman2decimal = function(roman) {
 	var i = 0;
 	var valid = true;
 	var lastD = 1;
+	var maxValue = 1001;
+
 	while(i < n) {
 		var d = romanMap[roman[i]];
 		// console.log(d,lastD);
+		if(d > maxValue) {
+			return -1;
+		}
+
 		if(i != 0 && d > lastD) {
 			if(d == 5 && lastD != 1 || d == 10 && lastD != 1 || d == 50 && lastD != 10 || d == 100 && lastD != 10 || d == 500 && lastD != 100 || d == 1000 && lastD != 100) {
 				return -1; // Not valid
 			}
+
+			if(i > 1 && maxValue <= lastD) {
+				return -1;
+			}
+
+			maxValue = lastD;
 		} else {
 			lastD = d;
 		}
@@ -171,50 +183,55 @@ var genMinRomanAt = function(roman,index,max) {
 		var r1 = roman.substr(0,i);
 		var r2 = roman.substr(i+1);
 
-		var jStart = letMap.indexOf(roman[i])-1;
 		var jArray = [6,5,4,3,2,1,0];
-		// if(i > 0) {
-		// 	var lastDigit = roman[i-1];
-		// 	if(lastDigit == "I") {
-		// 		jArray = [6,5,4];
-		// 	} else if(lastDigit == "V") {
-		// 		jArray = [6,5];
-		// 	} else if(lastDigit == "X") {
-		// 		jArray = [6,5,4,3,2];
-		// 	} else if(lastDigit == "L") {
-		// 		jArray = [6,5,4,3];
-		// 	} else if(lastDigit == "C") {
-		// 		jArray = [6,5,4,3,2,1,0];
-		// 	} else if(lastDigit == "D") {
-		// 		jArray = [6,5,4,3,2,1];
-		// 	} else if(lastDigit == "M") {
-		// 		jArray = [6,5,4,3,2,1,0];
-		// 	}
-		// }
+		if(i > 0) {
+			var lastDigit = roman[i-1];
+			if(lastDigit == "I") {
+				jArray = [6,5,4];
+				if(roman.length - i > 3) {return;}
+			} else if(lastDigit == "V") {
+				jArray = [6];
+				if(roman.length - i > 4) {return;}
+			} else if(lastDigit == "X") {
+				if(roman.length - i > 7) {return;}
+				jArray = [6,5,4,3,2];
+			} else if(lastDigit == "L") {
+				if(roman.length - i > 8) {return;}
+				jArray = [6,5,4];
+			} else if(lastDigit == "C") {
+				if(roman.length - i > 11) {return;}
+				jArray = [6,5,4,3,2,1,0];
+			} else if(lastDigit == "D") {
+				if(roman.length - i > 12) {return;}
+				jArray = [6,5,4,3,2];
+			} else if(lastDigit == "M") {
+				jArray = [6,5,4,3,2,1,0];
+				if(roman.length - i > 13) {
+					jArray = [0];
+				}
+			}
 
-		//3256
+			if(i > 2) {
+				if(lastDigit == "I" && roman[i-2] == "I" && roman[i-3] == "I") {
+					jArray = [5,4];
+				} else if(lastDigit == "X" && roman[i-2] == "X" && roman[i-3] == "X") {
+					jArray = [6,5,3,2];
+				} else if(lastDigit == "C" && roman[i-2] == "C" && roman[i-3] == "C") {
+					jArray = [6,5,4,3,1,0];
+				}
+			}
+		}
 
 		for(var j = 0; j < jArray.length; j++) {
-
-			// var valid = false;
-			// if(newLetter == "I" && roman.length >= 2) {
-			// 	if(j == roman.length-1) {
-			// 		valid = true;
-			// 	} else if(roman[j+1] == "X" || roman[j+1] == "V") {
-
-			// 	}
-			// 	valid = true;
-			// } else if(true) {
-			// }
-			
-			var romanPass = r1 + letMap[j] + r2;
+			var romanPass = r1 + letMap[jArray[j]] + r2;
 			genMinRomanAt(romanPass,i+1,max);
 		}
 	}
 };
 
 var genMinRoman = function(n) {
-	for(var chars = 1; chars < 10; chars++) {
+	//17
+	for(var chars = 1; chars < 17; chars++) {
 		var str = "";
 		for(var i = 0; i < chars; i++) {
 			str += "I";
@@ -244,8 +261,9 @@ var solveProblem = function(data) {
 		var reduced = reduceRoman(roman);
 
 		save += roman.length - reduced.length;
-		// console.log(roman,reduced);
+		console.log(roman,roman2decimal(roman),reduced);
 	}
+	// console.log(minRoman[4888])
 	console.log(save);
 	// console.log(roman2decimal("IL"));
 	//console.log(data);
