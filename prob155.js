@@ -25,83 +25,151 @@
 // 1/CT = 1/C1 + 1/C2 + ...,
 
 
-// This is really a type of graph, how can I represent it?
+// For every additional capacitor, try every combination
+// with one in serial and one in parallel
 
-// var circuit = {
-// 	'children': []
-// };
+// ,
+// 	2: [120,30],
+// 	3: [180,90,40,20]
 
+var uniques = [];
 
-// circuit.children.push({
-// 	'children': []
-// });
-
-// circuit.children.push({
-// 	'children': []
-// });
-
-// circuit.children[0].children
-
-var circuit1 = {
-	'caps': [
-		{
-			'parents': [-1],
-			'children': [-1]
-		}
-	],
-	'children': [0]
+var combos = {
+	1: [60]
 };
 
-var addCapacitor = function(circuit) {
-	var newCircuits = [];
+var addCapacitor = function(n) {
+	var newCombos = [];
+	for(var i = 1; i <= Math.ceil(n/2); i++) {
+		var j = n-i;
 
-	// //Version in serial
-	// for(var i = 0; i < circuit.caps.length; i++) {
+		for(var group1I = 0; group1I < combos[i].length; group1I++) {
+			for(var group2I = 0; group2I < combos[j].length; group2I++) {
 
-	// 	newCircuits[i] = {};
-	// 	newCircuits[i].caps = circuit.caps.slice(0); //TODO, not a deep copy :/
-	// 	newCircuits[i].children = circuit.children.slice(0);
-	// 	var cap = newCircuits[i].caps[i];
+				var group1 = combos[i][group1I];
+				var group2 = combos[j][group2I];
+			
+				var pVal = group1+group2;		
+				var sVal = group1*group2/(group1+group2);		
+				// console.log(i,j,group1,group2,pVal,sVal);
 
-	// 	var newCap = {
-	// 		'parents': [i],
-	// 		'children': cap.children.slice(0)
-	// 	};
-
-	// 	cap.children = [circuit.caps.length];
-	// 	newCircuits[i].caps.push(newCap);
-	// }
-
-	// Version in parallel
-	for(var i = 0; i < circuit.caps.length; i++) {
-		newCircuits[circuit.caps.length+i] = {};
-		var newC = newCircuits[circuit.caps.length+i];
-		newC.caps = circuit.caps.slice(0);
-		newC.children = circuit.children.slice(0);
-		var cap = newC.caps[i];
-
-		var newCap = {
-			'parents': cap.parents.slice(0),
-			'children': cap.children.slice(0)
-		};
-
-		for(var j = 0; j < cap.parents.length; j++) {
-			if(cap.parents[j] >= 0) {
-				newC.caps[cap.parents[j]].children.push(circuit.caps.length);
+				newCombos.push(pVal);
+				newCombos.push(sVal);
 			}
 		}
-
-		for(var j = 0; j < cap.children.length; j++) {
-			if(cap.children[j] >= 0) {
-				newC.caps[cap.children[j]].children.push(circuit.caps.length);
-			}
-		}
-
-		newC.caps.push(newCap);
 	}
 
-	console.log(newCircuits[1].caps)
-	return newCircuits;
+	newCombos.sort(function(a, b) {
+		return a - b;
+	});
+
+	combos[n] = [];
+	for(var i = 0; i < newCombos.length; i++) {
+		if(i == 0 || newCombos[i] - newCombos[i-1] > 0.000001) {
+			combos[n].push(newCombos[i]);
+		}
+	}
+
+	var newUniques = uniques.concat(combos[n]);
+	uniques = [];
+
+	newUniques.sort(function(a, b) {
+		return a - b;
+	});
+
+	for(var i = 0; i < newUniques.length; i++) {
+		if(i == 0 || newUniques[i] - newUniques[i-1] > 0.000001) {
+			uniques.push(newUniques[i]);
+		}
+	}
+
 };
 
-console.log(addCapacitor(circuit1));
+for(var i = 2; i <= 18; i++) {
+	addCapacitor(i);
+	console.log(i,combos[i].length)
+	console.log(uniques.length);
+}
+
+// console.log(combos)
+
+// // This is really a type of graph, how can I represent it?
+
+// // var circuit = {
+// // 	'children': []
+// // };
+
+
+// // circuit.children.push({
+// // 	'children': []
+// // });
+
+// // circuit.children.push({
+// // 	'children': []
+// // });
+
+// // circuit.children[0].children
+
+// var circuit1 = {
+// 	'caps': [
+// 		{
+// 			'parents': [-1],
+// 			'children': [-1]
+// 		}
+// 	],
+// 	'children': [0]
+// };
+
+// var addCapacitor = function(circuit) {
+// 	var newCircuits = [];
+
+// 	// //Version in serial
+// 	// for(var i = 0; i < circuit.caps.length; i++) {
+
+// 	// 	newCircuits[i] = {};
+// 	// 	newCircuits[i].caps = circuit.caps.slice(0); //TODO, not a deep copy :/
+// 	// 	newCircuits[i].children = circuit.children.slice(0);
+// 	// 	var cap = newCircuits[i].caps[i];
+
+// 	// 	var newCap = {
+// 	// 		'parents': [i],
+// 	// 		'children': cap.children.slice(0)
+// 	// 	};
+
+// 	// 	cap.children = [circuit.caps.length];
+// 	// 	newCircuits[i].caps.push(newCap);
+// 	// }
+
+// 	// Version in parallel
+// 	for(var i = 0; i < circuit.caps.length; i++) {
+// 		newCircuits[circuit.caps.length+i] = {};
+// 		var newC = newCircuits[circuit.caps.length+i];
+// 		newC.caps = circuit.caps.slice(0);
+// 		newC.children = circuit.children.slice(0);
+// 		var cap = newC.caps[i];
+
+// 		var newCap = {
+// 			'parents': cap.parents.slice(0),
+// 			'children': cap.children.slice(0)
+// 		};
+
+// 		for(var j = 0; j < cap.parents.length; j++) {
+// 			if(cap.parents[j] >= 0) {
+// 				newC.caps[cap.parents[j]].children.push(circuit.caps.length);
+// 			}
+// 		}
+
+// 		for(var j = 0; j < cap.children.length; j++) {
+// 			if(cap.children[j] >= 0) {
+// 				newC.caps[cap.children[j]].children.push(circuit.caps.length);
+// 			}
+// 		}
+
+// 		newC.caps.push(newCap);
+// 	}
+
+// 	console.log(newCircuits[1].caps)
+// 	return newCircuits;
+// };
+
+// console.log(addCapacitor(circuit1));
