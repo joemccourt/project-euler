@@ -25,51 +25,55 @@
 // Using farey sequence algo:
 // a/b < c/d  :  0/1 < 1/1
 
-var lastCount = 0;
-for(var N = 2; N < 221; N++) {
-var count = 0;
-var a = 0;
-var b = 1;
-var c0 = 1;
-var d0 = 2;
-var k = Math.floor((N-d0)/b);
-var c = c0 + k * a;
-var d = d0 + k * b;
 
-var e,f;
-while(!(c == 1 && d == 1)) {
-	count++;
-	k = ((N + b) / d)|0;
-	e = k*c - a;
-	f = k*d - b;
-	a = c;
-	b = d;
-	c = e;
-	d = f;
-}
+// This algo is too slow
+// var lastCount = 0;
+// for(var N = 2; N < 221; N++) {
+// var count = 0;
+// var a = 0;
+// var b = 1;
+// var c0 = 1;
+// var d0 = 2;
+// var k = Math.floor((N-d0)/b);
+// var c = c0 + k * a;
+// var d = d0 + k * b;
 
-console.log(N,count,count - lastCount);
-lastCount = count;
-}
+// var e,f;
+// while(!(c == 1 && d == 1)) {
+// 	count++;
+// 	k = ((N + b) / d)|0;
+// 	e = k*c - a;
+// 	f = k*d - b;
+// 	a = c;
+// 	b = d;
+// 	c = e;
+// 	d = f;
+// }
+
+// console.log(N,count,count - lastCount);
+// lastCount = count;
+// }
 
 //Note pattern of:
 //Increase by n-1 for prime numbers
 // For not squarefree numbers
 // 4: 2 (4-2)
-// 8: 4 
+// 8: 4 2*(4-2)
 // 9: 6 (9-3)
 // 12: 4 ((3-1)*(4-2))
-// 16: 8
+// 16: 8 4*(4-2)
 // 18: 6 (2-1)*(9-3)
 // 20: 8 (5-1)*(4-2)
-// 24: 8
+// 24: 8 (3-1)*2*(4-2)
 // 25: 20 (25-5)
-// 27: 18
-// 32: 16
+// 27: 18 3*(9-3)
+// 32: 16 8*(4-2)
 // 36: 12 (4-2)*(9-3)
 // 49: 42 (49-7)
 // 50: 20 (2-1)*(25-5)
+// 72: 24
 // 121: 110 (121-11)
+// 125:100 5*(25-5)
 
 // Distinct primes
 // 6 (2*3): 2 (1*2)
@@ -86,25 +90,80 @@ lastCount = count;
 // 70 (2*5*7): 24 (1*4*6)
 // 210 (2*3*5*7): 48 (1*2*4*6)
 
-function isPrime(number){
-	if(number <= 1){return false;}
-	if(number == 2){return true;}
-	if(!(number%2)){return false;}
-	var maxCheck = Math.floor(Math.sqrt(number));
-	for(var i = 3; i <= maxCheck; i+=2){
-		if(!(number%i)){return false;}
+function getPrimeFactors(number){
+	var factors = {};
+	var d = 2;
+	while(d <= number){
+		if(!(number%d)){
+			if(!factors[d]){
+				factors[d] = 1;
+			}else{
+				factors[d]++; 
+			}
+			number/=d;
+		}else{
+			d++;
+		}
 	}
-	return true;
-}
+	return factors;
+};
 
+var factorsMemo = {};
+function getPrimeFactorsv2(number){
+	var factors = {};
+	var limit = Math.ceil(Math.sqrt(number));
+	var num0 = number;
+	var d = 2;
+	while(d <= limit){
+		// if(factorsMemo[number]) {
+		// 	for(var factor in factorsMemo[number]) {
+		// 		if(!factors[factor]) {
+		// 			factors[factor] = factorsMemo[number][factor];
+		// 		} else {
+		// 			factors[factor] += factorsMemo[number][factor];
+		// 		}
+		// 	}
+		// 	d = number+1;
+		// 	break;
+		// }
+
+		if(!(number%d)){
+			if(!factors[d]){
+				factors[d] = 1;
+			}else{
+				factors[d]++; 
+			}
+			number/=d;
+		}else{
+			d++;
+		}
+	}
+
+	if(d <= number) {
+		factors[number] = 1;
+	}
+
+	// factorsMemo[num0] = factors;
+	return factors;
+};
+
+//40000-1 486329715
 
 var count = 0;
-for(var i = 2; i < 32; i++) {
-	if(isPrime(i)) {
-		count += i-1;
-	} else {
-		count += 4;
+for(var i = 2; i <= 1000000; i++) {
+	var factors = getPrimeFactorsv2(i);
+
+	var inc = 1;
+	for(var f in factors) {
+		if(factors[f] == 1) {
+			inc *= f-1;
+		} else if(factors[f] == 2) {
+			inc *= f*f-f;
+		} else {
+			inc *= Math.pow(f,factors[f]-2)*(f*f-f);
+		}
 	}
+	count+=inc;
 }
 
 console.log(count);
