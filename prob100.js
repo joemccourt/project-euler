@@ -71,15 +71,50 @@ function getPrimeFactors(number){
 // 2*sqrt(k) = 1+2*n;
 
 // 2b-1 = sqrt(2n^2-2n+1)
-// (2b-1)^2 = 2n^2-2n+1
-var start = 30;//1000000000000;
-for(var n = start; n < start+1000000000; n++) {
-	var b = (1 + Math.sqrt(2*n*n-2*n+1))/2;
+// = sqrt(n) * sqrt(2*n-2+1/n)
+
+// (2b-1)^2 = 2n^2-2n+1 = k^2
+
+// 2(n+dn)^2-2(n+dn)+1 = (k+c)^2
+// 2*n2*n2-2*n2+1-(k+c)^2 = 0
+// n2 = (-2 + sqrt(4+4*2*((k+c)^2-1)))/4
+// n2 = (-1 + sqrt(1+2*((k+c)^2-1)))/2
+
+// 21 15 21
+// 120 85 5.714285714285714
+// 697 493 5.808333333333334
+// 4060 2871 5.824964131994261
+// 23661 16731 5.827832512315271
+// 137904 97513 5.828325091923419
+// 803761 568345 5.828409618285184
+// 4684660 3312555 5.828424121100675
+// 27304197 19306983 5.82842660940175
+
+var start = 120;//1000000000000;
+var nLast = 21;
+for(var n = start; n < 10000000000000; n++) {
+	var k = 2*n*n-2*n+1;
+	var b = (1 + Math.sqrt(k))/2;
+
+	// var b = (1 + Math.sqrt(n)*Math.sqrt(2*n-2+1/n))/2;
 	// var b = (1 + Math.sqrt(n*n-n+1/2)*Math.sqrt(2))/2;
 
-	if(b-(b|0) == 0) {
-		console.log(n,b,n/b);
-		break;
+	// console.log(n);
+	if(b == Math.floor(b)) {
+		var ratioL = ratio;
+		var ratio = n/nLast;
+		console.log(n,b,ratio,n-nLast*ratioL);
+		nLast = n;
+		n = Math.floor(n*ratio+11);
+
+		// console.log(getPrimeFactors(n));
+		// console.log(getPrimeFactors(b));
+		// console.log(getPrimeFactors(n-1));
+		// console.log(getPrimeFactors(b-1));
+		// // console.log(getPrimeFactors(n+1));
+		// console.log(getPrimeFactors(2*b-1));
+		// console.log(getPrimeFactors(Math.pow(2*b-1,2)));
+		// break;
 		//console.log(getPrimeFactors(n),getPrimeFactors(n-1),getPrimeFactors(b),getPrimeFactors(b-1));
 	}
 }
