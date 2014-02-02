@@ -79,21 +79,122 @@
 // 10 - n = k*n/9*0.999
 // k = 9*(10-n)/(0.9999)
 // k = (10-1)*(10-n)/
-//Assuming repeating part starts immediately
-var maxP = 1;
-for(var n = 12; n < 13; n++) {
-	for(var p = 1; p < 10; p++) {
-		var kS = (Math.pow(10,p)) / n;
-		var kR = (Math.pow(10,p)-1) / n;
-		var kR2 = (Math.pow(10,p-1)-(kS|0));
-		console.log(p,kS,kR,kR2)
-		if(kS == (kS|0)) {break;}
-		if(kR == (kR|0)	) {
-			if(p > maxP) {
-				maxP = p;
-				console.log(n,kR,maxP);
-				break;
+
+function getPrimeFactors(number){
+	var factors = {};
+	var d = 2;
+	var limit = Math.ceil(Math.sqrt(number));
+
+	while(d <= limit){
+		if(!(number%d)){
+			if(!factors[d]){
+				factors[d] = 1;
+			}else{
+				factors[d]++; 
 			}
+			number/=d;
+		}else{
+			d++;
 		}
 	}
+
+	if(d <= number) {
+		factors[number] = 1;
+	}
+	return factors;
+};
+
+function isPrime(number){
+	if(number <= 1){return false;}
+	if(number == 2){return true;}
+	if(!(number%2)){return false;}
+	var maxCheck = Math.floor(Math.sqrt(number));
+	for(var i = 3; i <= maxCheck; i+=2){
+		if(!(number%i)){return false;}
+	}
+	return true;
 }
+
+var bigMod = function(digits,n) {
+	var mod = 1;
+	var tenMod0 = (2 % n) * (5 % n) % n;
+	for(var i = 1; i < digits; i++) {
+		var tenMod = 1;//Math.pow(tenMod0,i) % n;
+		for(var j = 0; j < i; j++) {
+			tenMod = tenMod0 * tenMod % n;
+		}
+
+		mod = (mod + tenMod)%n; 
+	}
+	return mod;
+};
+
+// console.log(bigMod([1,1,1,1,1,1],38))
+
+//Assuming repeating part starts immediately
+// var maxP = 1;
+// for(var n = 3; n < 4; n++) {
+// 	var nFactors = getPrimeFactors(n);
+// 	for(var p = 1; p < 10; p++) {
+// 		var kFactors = getPrimeFactors(Math.pow(10,p)-1);
+// 		console.log(kFactors)
+// 		var kS = (Math.pow(10,p)) / n;
+// 		var kR = (Math.pow(10,p)-1) / n;
+
+// 		// console.log(p,kS,kR,kR2)
+// 		// if(kS == Math.floor(kS)) {break;}
+// 		if(kR == Math.floor(kR)) {
+// 			if(p > maxP) {
+// 				maxP = p;
+// 				console.log(n,kR,maxP);
+// 				console.log(kFactors);
+// 			}
+// 			// break;
+// 		}
+// 	}
+// }
+
+// Search for prime divisible only by highest repeating 9
+// Nines always divisible by 9, search 1s
+
+//Notice pattern with 1s factors
+//Only distinct primes
+//Divisible by 11 every 2 digits, 3, 37 every 3, 11, 101 every 4
+var found = {};
+var nines = [];
+var ones = [];
+var nine = 0;
+for(var digits = 1; digits < 1000; digits++) {
+	
+	ones.push(1);
+
+	for(var d = 3; d < 1000; d++) {
+		if(!found[d] && bigMod(digits,d) == 0) {
+			console.log("New highest",d,digits)
+			found[d] = digits;
+		}
+	}
+
+	// nine = nine*10 + 1;
+
+	// nines[digits] = nine;
+
+	// console.log(nine);
+	// var factorsNine = getPrimeFactors(nine);
+
+	// for(var key in factorsNine) {
+	// 	if(!found[key]  && parseInt(key,10) < 1000) {
+	// 		// console.log("New highest",key,digits)
+	// 		found[key] = digits;
+	// 	}
+	// }
+	// console.log(factorsNine,digits)
+}
+
+for(var i = 3; i < 1000; i++) {
+	if(!found[i] && isPrime(i)) {
+		console.log("not found",i)
+	}
+}
+
+// console.log(found)
