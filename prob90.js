@@ -88,7 +88,39 @@ var genSets = function(setV,index) {
 setVs[0] = [1,1,1,1,1,1,0,0,0,0];
 genSets(setVs[0],0);
 
-console.log(setVs);
-console.log(setVs.length);
+// console.log(setVs);
+
+// Augment 6/9 digits
+for(var i = 0; i < setVs.length; i++) {
+	var setV = setVs[i];
+	if(setV[6] || setV[9]) {
+		setV[6] = 1;
+		setV[9] = 1;
+	}
+}
+
+// Search for valid combinations
+var numValid = 0;
+var pairs = [[0,1],[0,4],[0,9],[1,6],[2,5],[3,6],[4,9],[6,4],[8,1]];
+for(var i = 0; i < setVs.length; i++) {
+	var setVI = setVs[i];
+	for(var j = i; j < setVs.length; j++) {
+		var setVJ = setVs[j];
+		valid = true;
+		for(var k = 0; k < pairs.length; k++) {
+			var pair = pairs[k];
+			if(setVI[pair[0]] && setVJ[pair[1]] || setVI[pair[1]] && setVJ[pair[0]]) {
+				// valid
+			} else {
+				valid = false;
+				break;
+			}
+		}
+
+		if(valid) {numValid++}
+	}
+}
+
+console.log(setVs.length*setVs.length,numValid);
 
 
