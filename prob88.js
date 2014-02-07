@@ -34,7 +34,11 @@
 
 // For given k can we find minimal N?
 // Prod(xi) = Sum(xi)
-// 1*....*2*k = 2k = (k-1)+2+k  (valid, but not necessarily min)
+// 1*....*2*k = 2k = (k-1)+2+k  (alwaays valid, but not necessarily min)
+// So from this solution, how to search for smaller ones?
+// Value must be greater than k because 1+1+1+... = k != 1*1*1*1
+// x0 * x1 * ... * xk = N = x0 + x1 + ... + xk  N: (k,2k]
+// (x0 * x1 * ... * xk) * (N-p)/N = (N-p) = x0 + x1 + ... + xk - p
 
 // if (k-1) equals 4:
 // 2(k-1) = 1*....*2*2*(k-1)/2 = (k-2)+4+(k-1)/2
@@ -42,9 +46,53 @@
 
 
 
+// Seems to work for prime factorization Hmmmm
+// k=5: 10 = 1 × 1 × 1 × 2 × 5 = 1 + 1 + 1 + 2 + 5
+// k=7: 12 = 1*1*1*1*1*4*3 = 12 = 5 + 4 + 3
+// k=8: 15 = 1*1*1*1*1*1*3*5 = 15 = 1+1+1+1+1+1+3+5
+
+function getPrimeFactors(number){
+	var factors = {};
+	var d = 2;
+	var limit = Math.ceil(Math.sqrt(number));
+
+	while(d <= limit){
+		if(!(number%d)){
+			if(!factors[d]){
+				factors[d] = 1;
+			}else{
+				factors[d]++; 
+			}
+			number/=d;
+		}else{
+			d++;
+		}
+	}
+
+	if(d <= number) {
+		factors[number] = 1;
+	}
+	return factors;
+};
 
 
+for(var k = 2; k < 10; k++) {
+	var solved = true;
+	for(var n = k; n < 2*k; n++) {
+		var factors = getPrimeFactors(n);
+		var sum = k;
+		for(var key in factors) {
+			sum += factors[key]*(key-1);
+		}
 
+		if(sum == n) {
+			solved = true;
+			break;
+		}
+	}
+
+	console.log(k,n);
+}
 
 
 
