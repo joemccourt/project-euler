@@ -49,7 +49,7 @@
 // Seems to work for prime factorization Hmmmm
 // k=5: 10 = 1 × 1 × 1 × 2 × 5 = 1 + 1 + 1 + 2 + 5
 // k=7: 12 = 1*1*1*1*1*4*3 = 12 = 5 + 4 + 3
-// k=8: 15 = 1*1*1*1*1*1*3*5 = 15 = 1+1+1+1+1+1+3+5
+// k=9: 15 = 1*1*1*1*1*1*3*5 = 15 = 1+1+1+1+1+1+3+5
 
 function getPrimeFactors(number){
 	var factors = {};
@@ -75,24 +75,90 @@ function getPrimeFactors(number){
 	return factors;
 };
 
+var minK = {};
+var searchPS = function(vector,n,mapSearched,mapHashWidth) {
+	var sum = 0;
+	for(var i = 0; i < vector.length; i++) {
+		sum += vector[i];
+	}
 
-for(var k = 2; k < 10; k++) {
-	var solved = true;
-	for(var n = k; n < 2*k; n++) {
-		var factors = getPrimeFactors(n);
-		var sum = k;
-		for(var key in factors) {
-			sum += factors[key]*(key-1);
+	var k = vector.length + n - sum;
+	// console.log(k,vector);
+	if(!minK[k] || n < minK[k]) {
+		minK[k] = n;
+	}
+
+	var iVisted = {};
+	var ijVisted = {};
+	for(var i = 0; i < vector.length-1; i++) {
+		// if(iVisted[vector[i]]) {continue;} else {iVisted[vector[i]] = true;}
+		for(var j = i+1; j < vector.length; j++) {
+			// if(ijVisted[vector[j]+vector[i]*n]) {continue;} else {ijVisted[vector[j]+vector[i]*n] = true;}
+			var newVector = vector.slice(0,i);
+			newVector = newVector.concat(vector.slice(i+1));
+			newVector[j-1] = vector[i]*vector[j];
+			// newVector[i] = 1;
+
+			newVector.sort(function(a, b) {return a - b;});
+			var mapHash = "";
+			for(var p = 0; p < newVector.length; p++) {
+				mapHash += newVector[p]+",";// * Math.pow(mapHashWidth,p);
+			}
+
+			// if(mapHash > Math.pow(2,53)) {console.log("WARNING")}
+			if(mapSearched[mapHash]) {continue;} else {mapSearched[mapHash] = true;}
+
+			searchPS(newVector,n,mapSearched,mapHashWidth);
 		}
+	}
+}
 
-		if(sum == n) {
-			solved = true;
-			break;
+var maxKRange = 12000;
+for(var n = 2; n <= 2*maxKRange; n++) {
+	var factors = getPrimeFactors(n);
+	var vector = [];
+	var factorNums = [];
+	var maxF = 0;
+	for(var key in factors) {
+		if(factors[key] > maxF) {maxF = factors[key];}
+		for(var i = 0; i < factors[key]; i++) {
+			factorNums.push(parseInt(key,10));
 		}
 	}
 
-	console.log(k,n);
+	var mapSearched = {};
+	searchPS(factorNums,n,mapSearched,maxF+1);
 }
+
+// Sum unique items
+var uniqueK = {};
+var sum = 0;
+for(var k in minK) {
+	if(k >= 2 && k <= maxKRange && !uniqueK[minK[k]]) {
+		uniqueK[minK[k]] = true;
+		sum += minK[k];	
+	}
+}
+//7611973
+// console.log(minK);
+console.log(uniqueK,sum);
+// for(var k = 2; k < 10; k++) {
+// 	var solved = true;
+// 	for(var n = k; n < 2*k; n++) {
+// 		var factors = getPrimeFactors(n);
+// 		var sum = k;
+// 		for(var key in factors) {
+// 			sum += factors[key]*(key-1);
+// 		}
+
+// 		if(sum == n) {
+// 			solved = true;
+// 			break;
+// 		}
+// 	}
+
+// 	console.log(k,n);
+// }
 
 
 
