@@ -33,12 +33,12 @@
 // A = (1/4) * c * a * sqrt(4-c/a)^2)
 
 // For c = a + 1
-// A = (1/4) * c * sqrt((3a+1)*(a+1))
-// A = (1/4) * c * sqrt(3a^2 + 4a + 1)
+// A = (1/4) * c * sqrt((3a+1)*(a-1))
+// A = (1/4) * c * sqrt(3a^2 - 2a - 1)
 
 // For c = a - 1
-// A = (1/4) * c * sqrt((3a-1)*(a-1))
-// A = (1/4) * c * sqrt(3a^2 - 4a + 1)
+// A = (1/4) * c * sqrt((3a-1)*(a+1))
+// A = (1/4) * c * sqrt(3a^2 + 2a - 1)
 
 // For c = a + 1
 // let k*k = 3a^2 + 4a + 1
@@ -58,9 +58,27 @@
 //11303296667
 //4511037031
 //11054272282
+//77714875685
+//138907096
+var maxPercision = Math.pow(2,53);
+//Given a is known to be integer
+var isInt = function(a,b) {
+	if(a > maxPercision || b > maxPercision) {
+		console.log("Warning, exceded precision limit");
+		return false;
+	}
+
+	var bFrac = b - Math.floor(b);
+	return a*bFrac == Math.floor(a*bFrac);
+}
+
+// var sqrts = {};
+// for(var i = 1; i < 1000000; i++) {
+// 	sqrts[i*i] = i;
+// }
 
 var sumP = 0;
-var maxA = 300000000 / 3 + 10;
+var maxA = Math.ceil(1000000000 / 3 + 10);
 for(var a = 2; a <= maxA; a++) {
 	// c = a + 1
 
@@ -68,33 +86,42 @@ for(var a = 2; a <= maxA; a++) {
 	// Math.sqrt(4*a*a-c*c)
 	// (1/4) * c * a *
 
-	var c = a + 1;
-	var areaSqrt = Math.sqrt(3*a*a + 4*a + 1)/4;
-	var areaSqrt = Math.sqrt(4*a*a-c*c)/4;
-
 	// a * sqrt(4 - (c/a)*(c/a))
 	// a * sqrt(4 - (a+1)^2/a^2)
 	// a * sqrt(4 - 1 + 2/a + 1/a/a)
 	// a * sqrt(3 + 2/a + 1/a/a)
+	// var areaSqrt = Math.sqrt(3*a*a + 4*a + 1)/4;
 
-	if(areaSqrt == Math.floor(areaSqrt) || areaSqrt == Math.floor(2*areaSqrt)/2 && a % 2 == 0 || areaSqrt == Math.floor(4*areaSqrt)/4 && a % 4 == 0) {
-		// if(c % 4 == 0 || areaSqrt % 4 == 0 || (c % 2 == 0 && areaSqrt % 2 == 0)) {
-			var p = a + a + c;
-			sumP += p;
-			console.log(a,a,c,areaSqrt,p);
-			// console.log(Math.sqrt(4 - (c/a)*(c/a)));
-		// }
+	var c = a + 1;
+	var sqrt = Math.sqrt(3*a*a-2*a-1);
+	if(Math.floor(sqrt) == sqrt && sqrt*sqrt == 3*a*a-2*a-1) {
+		var areaSqrt = sqrt/4;
+
+		if(sqrt*sqrt > Math.pow(2,53)) {
+			console.log("Warning");
+		} else {
+			if(isInt(c,areaSqrt)) {
+				var p = a + a + c;
+				sumP += p;
+				console.log(a,a,c,areaSqrt,p);
+			}
+		}
 	}
 
 	var c = a - 1;
-	var areaSqrt = Math.sqrt(4*a*a-c*c) / 4;
+	var sqrt = Math.sqrt(3*a*a+2*a-1);
+	if(Math.floor(sqrt) == sqrt && sqrt*sqrt == 3*a*a+2*a-1) {
+		var areaSqrt = sqrt/4;
 
-	if(areaSqrt == Math.floor(areaSqrt) || areaSqrt == Math.floor(2*areaSqrt)/2 && a % 2 == 0 || areaSqrt == Math.floor(4*areaSqrt)/4 && a % 4 == 0) {
-		// if(c % 4 == 0 || areaSqrt % 4 == 0 || (c % 2 == 0 && areaSqrt % 2 == 0)) {
-			var p = a + a + c;
-			sumP += p;
-			console.log(a,a,c,areaSqrt,p);
-		// }
+		if(sqrt*sqrt > Math.pow(2,53)) {
+			console.log("Warning");
+		} else {
+			if(isInt(c,areaSqrt)) {
+				var p = a + a + c;
+				sumP += p;
+				console.log(a,a,c,areaSqrt,p);
+			}
+		}
 	}
 }
 
