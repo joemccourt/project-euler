@@ -13,7 +13,6 @@
 // determine which line number has the greatest numerical value.
 // NOTE: The first two lines in the file represent the numbers in the example given above.
 
-
 // Observations:
 // Goal is to find which is largest, NOT to evaluate the number
 // Over three million digits is too much to compute, so how can
