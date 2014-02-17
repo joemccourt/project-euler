@@ -66,25 +66,28 @@ function getPrimeFactors(number){
 // x = (5+1)/(5-1)
 // x = (2+2.5)/(2.5-2)
 
-for(var d = 2; d <= 10; d++) {
+// 3*3 - 8*1*1 = 1
+for(var d = 2; d <= 100; d++) {
 	if(Math.sqrt(d) == Math.floor(Math.sqrt(d))) {continue;}
 
-	var minX = 1;
-	for(var k = 1; k < Math.sqrt(d); k++) {
-		if(d % k == 0) {
+	var minX = 9999999999999999999;
+	for(var k = 1; k < d; k++) {
+		// if(d % k == 0) {
 			var p = d/k;
-
-			var x = (k+p)/(p-k);
-			console.log(d,x,k,p);
+			var x = (k+p)/Math.abs(p-k);
+			// console.log(d,x,k,p);
 			var trunc = x - Math.floor(x);
-			if(trunc > 0) {
-				x = x / trunc;
-			}
+			// var n = 2;
+			// while(trunc > 0) {
+			// 	x = (k*n+p/n)/(p/n-k*n);
+			// 	trunc = x - Math.floor(x);
+			// 	n++;
+			// }
 
-			if(x >= minX) {
-				minX = x;
+			if(trunc < 0.0000001 && x <= minX) {
+				minX = Math.round(x);
 			}
-		}
+		// }
 	}
 	console.log(d,minX);
 }
