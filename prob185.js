@@ -47,18 +47,18 @@
 // from 39458 and 34109, one or two of x9458 is correct
 // one or two of 51x45 is correct
 
-Digit possible values
-0 9(2/5), 7(0), 3(2/5, 1/5), 5(2/5), 1(1/5)
-1 0(2/5,0), 9(2/5), 4(1/5), 1(2/5), 2(1/5)
-2 3(2/5), 7(0), 4(2/5), 1(1/5), 5(2/5, 1/5)
-3 4(2/5,2/5), 9(0), 5(2/5), 0(1/5), 3(1/5)
-4 2(2/5), 4(0), 8(2/5), 9(2/4), 5(2/5), 1(1/5)
+// Digit possible values
+// 0 9(2/5), 7(0), 3(2/5, 1/5), 5(2/5), 1(1/5)
+// 1 0(2/5,0), 9(2/5), 4(1/5), 1(2/5), 2(1/5)
+// 2 3(2/5), 7(0), 4(2/5), 1(1/5), 5(2/5, 1/5)
+// 3 4(2/5,2/5), 9(0), 5(2/5), 0(1/5), 3(1/5)
+// 4 2(2/5), 4(0), 8(2/5), 9(2/4), 5(2/5), 1(1/5)
 
-0 9(2/5), 3(2/5, 1/5), 5(2/5), 1(1/5)
-1 9(2/5), 4(1/5), 1(2/5), 2(1/5)
-2 3(2/5), 4(2/5), 1(1/5), 5(2/5, 1/5)
-3 4(2/5,2/5), 5(2/5), 0(1/5), 3(1/5)
-4 2(2/5), 8(2/5), 9(2/5), 5(2/5), 1(1/5)
+// 0 9(2/5), 3(2/5, 1/5), 5(2/5), 1(1/5)
+// 1 9(2/5), 4(1/5), 1(2/5), 2(1/5)
+// 2 3(2/5), 4(2/5), 1(1/5), 5(2/5, 1/5)
+// 3 4(2/5,2/5), 5(2/5), 0(1/5), 3(1/5)
+// 4 2(2/5), 8(2/5), 9(2/5), 5(2/5), 1(1/5)
 
 
 // Truth table
@@ -78,27 +78,96 @@ Digit possible values
 
 // Based on the following guesses,
 
-// 5616185650518293 ;2 correct
-// 3847439647293047 ;1 correct
-// 5855462940810587 ;3 correct
-// 9742855507068353 ;3 correct
-// 4296849643607543 ;3 correct
-// 3174248439465858 ;1 correct
-// 4513559094146117 ;2 correct
-// 7890971548908067 ;3 correct
-// 8157356344118483 ;1 correct
-// 2615250744386899 ;2 correct
-// 8690095851526254 ;3 correct
-// 6375711915077050 ;1 correct
-// 6913859173121360 ;1 correct
-// 6442889055042768 ;2 correct
-// 2321386104303845 ;0 correct
-// 2326509471271448 ;2 correct
-// 5251583379644322 ;2 correct
-// 1748270476758276 ;3 correct
-// 4895722652190306 ;1 correct
-// 3041631117224635 ;3 correct
-// 1841236454324589 ;3 correct
-// 2659862637316867 ;2 correct
+var guessesStart = 
+[
+{g:"5616185650518293",correct:2},
+{g:"3847439647293047",correct:1},
+{g:"5855462940810587",correct:3},
+{g:"9742855507068353",correct:3},
+{g:"4296849643607543",correct:3},
+{g:"3174248439465858",correct:1},
+{g:"4513559094146117",correct:2},
+{g:"7890971548908067",correct:3},
+{g:"8157356344118483",correct:1},
+{g:"2615250744386899",correct:2},
+{g:"8690095851526254",correct:3},
+{g:"6375711915077050",correct:1},
+{g:"6913859173121360",correct:1},
+{g:"6442889055042768",correct:2},
+{g:"2321386104303845",correct:0},
+{g:"2326509471271448",correct:2},
+{g:"5251583379644322",correct:2},
+{g:"1748270476758276",correct:3},
+{g:"4895722652190306",correct:1},
+{g:"3041631117224635",correct:3},
+{g:"1841236454324589",correct:3},
+{g:"2659862637316867",correct:2}
+];
 
+var eliminateNum = function(guesses, num, index, value) {
+	for(var i = 0; i < guesses.length; i++) {
+		if(guesses[i].g[index] == num) {
+			var guess = guesses[i].g;
+			guesses[i].g = guess.substr(0,index)+value+guess.substr(index+1);
+
+			if(value == "T") {
+				guesses[i].correct--;
+			}
+		} else if (value == "T" && guesses[i].g[index] != num) {
+			var guess = guesses[i].g;
+			guesses[i].g = guess.substr(0,index)+"F"+guess.substr(index+1);
+		}
+	}
+};
+
+var eliminateGuess = function(guesses, guessI, value) {
+	var guess = guesses[guessI].g;
+	for(var i = 0; i < guess.length; i++) {
+		var num = guess[i];
+
+		if(num != "T" && num != "F") {
+			eliminateNum(guesses, num,i,value);
+		}
+	}
+};
+
+var getNumUnknown = function(guesses, guessI) {
+	var sum = 0;
+	var guess = guesses[guessI].g;
+	for(var i = 0; i < guess.length; i++) {
+		var num = guess[i];
+		if(num != "T" && num != "F") {
+			sum++;
+		}
+	}
+	return sum;
+}
+
+var solve = function(guesses) {
+	for(var i = 0; i < guesses.length; i++) {
+		var unknown = getNumUnknown(guesses, i);
+		if(guesses[i].correct == 0) {
+			eliminateGuess(guesses, i,"F");
+		} else if (guesses[i].correct == unknown) {
+			eliminateGuess(guesses, i,"T");
+		} else if (guesses[i].correct < 0 || guesses[i].correct > unknown) {
+			return false;
+		}		
+	}
+
+	for(var i = 0; i < guesses.length; i++) {
+		for(var j = 0; j < guesses.length; j++) {
+			var num = guesses[i].g[j];
+
+			if(num != "T" && num != "F") {
+				var copy = guesses.slice(0);
+				eliminateNum(guesses, num, 0, "T");
+			}
+		}
+	}
+
+	return guesses;
+}
+
+console.log(solve(guessesStart));
 // Find the unique 16-digit secret sequence.
