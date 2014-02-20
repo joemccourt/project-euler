@@ -77,6 +77,14 @@
 // 12531 ;1 correct
 
 // Based on the following guesses,
+var guessesEasy = [
+{g:"90342",correct:2},
+{g:"70794",correct:0},
+{g:"39458",correct:2},
+{g:"34109",correct:1},
+{g:"51545",correct:2},
+{g:"12531",correct:1}
+];
 
 var guessesStart = 
 [
@@ -103,29 +111,32 @@ var guessesStart =
 {g:"1841236454324589",correct:3},
 {g:"2659862637316867",correct:2}
 ];
+// '464026157184.533'
 
 var eliminateNum = function(guesses, num, index, value) {
 	for(var i = 0; i < guesses.length; i++) {
+		var guess = guesses[i].g;
 		if(guesses[i].g[index] == num) {
-			var guess = guesses[i].g;
 			guesses[i].g = guess.substr(0,index)+value+guess.substr(index+1);
 
 			if(value == "T") {
 				guesses[i].correct--;
 			}
 		} else if (value == "T" && guesses[i].g[index] != num) {
-			var guess = guesses[i].g;
 			guesses[i].g = guess.substr(0,index)+"F"+guess.substr(index+1);
 		}
 	}
 };
 
-var eliminateGuess = function(guesses, guessI, value) {
+var eliminateGuess = function(guesses, guessI, value, solution) {
 	var guess = guesses[guessI].g;
 	for(var i = 0; i < guess.length; i++) {
 		var num = guess[i];
 
 		if(num != "T" && num != "F") {
+			if(value == "T") {
+				solution[i] = num;
+			}
 			eliminateNum(guesses, num,i,value);
 		}
 	}
@@ -143,31 +154,68 @@ var getNumUnknown = function(guesses, guessI) {
 	return sum;
 }
 
-var solve = function(guesses) {
+var itter = 0;
+var solve = function(guesses,index,solution) {
+	// itter++;
+
+	// if(itter > 1500000) {
+	// 	console.log(solution);
+	// 	return;
+	// } else{
+	// }
+
+	// console.log(index,solution);
+	// while(index-1 < guesses[0].g.length && typeof solution[index] !== "undefined") {index++;}
+	if(index >= guesses[0].g.length) {
+		return guesses;
+	}
+
 	for(var i = 0; i < guesses.length; i++) {
 		var unknown = getNumUnknown(guesses, i);
-		if(guesses[i].correct == 0) {
+		if(unknown > 0 && guesses[i].correct == 0) {
 			eliminateGuess(guesses, i,"F");
-		} else if (guesses[i].correct == unknown) {
-			eliminateGuess(guesses, i,"T");
+		} else if (unknown > 0 && guesses[i].correct == unknown) {
+			eliminateGuess(guesses, i,"T", solution);
 		} else if (guesses[i].correct < 0 || guesses[i].correct > unknown) {
 			return false;
 		}		
 	}
 
-	for(var i = 0; i < guesses.length; i++) {
-		for(var j = 0; j < guesses.length; j++) {
-			var num = guesses[i].g[j];
+	var solvedIndex = true;
+	// var existsTrue = false;
+	for(var j = 0; j < guesses.length; j++) {
+		var num = guesses[j].g[index];
+		// if(num == "T") {existsTrue = true;}
+		if(num != "T" && num != "F") {
+			solvedIndex = false;
+			var solutionCopy = solution.slice(0);
+			solutionCopy[index] = num;
 
-			if(num != "T" && num != "F") {
-				var copy = guesses.slice(0);
-				eliminateNum(guesses, num, 0, "T");
+			var copy = [];
+			for(var k = 0; k < guesses.length; k++) {
+				copy[k] = {g:guesses[k].g,correct:guesses[k].correct};
 			}
+			eliminateNum(copy, num, index, "T");
+		 	var r = solve(copy,index+1,solutionCopy);
+		 	if(r) {
+		 		if(index+3 >= guesses[0].g.length) {
+		 		}
+		 			console.log(solutionCopy);
+		 		return r;
+		 	} else {
+				eliminateNum(guesses, num, index, "F");
+		 	}
 		}
 	}
 
-	return guesses;
+	if(solvedIndex) {
+		return solve(guesses,index+1,solution);
+	} else {
+		return false;
+	}
 }
 
-console.log(solve(guessesStart));
+console.log(solve(guessesStart,0,[]));
+
+
 // Find the unique 16-digit secret sequence.
