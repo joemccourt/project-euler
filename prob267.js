@@ -28,9 +28,6 @@
 // Extreme f = 1:
 // 2^-1000 chance.
 
-// Note that win/loses are not communitivitive,
-// win,lose will not have same result as lose,win
-
 // At what f, assets, and num flips left is it impossible to get goal?
 // This limit is assuming every flip is a win
 // assets(n+1) = assets(n) * (1-f) + 2*(assets(n) * f) 
@@ -48,19 +45,108 @@
 // console.log(Math.pow(10,9/1000)-1)
 
 // Let's try brute force with lower number of flips
+// This is correct, but scales horribly (2^num flips)
 var probHitGoal = function(state) {
-	if(state.flipsLeft == 0) {return state.prob;}
+	console.log(state)
+	if(state.flipsLeft == 0) {
+		if(state.assets >= state.goal) {
+			return state.prob;
+		} else {
+			return 0;
+		}
+	}
+
 	if(state.prob == 0) {return 0;}
 
+	var stateWin = {
+		assets: state.assets * (1+state.f),
+		prob: state.prob * 0.5,
+		f: state.f,
+		goal: state.goal,
+		flipsLeft: state.flipsLeft - 1
+	};
 
+	var stateLose = {
+		assets: state.assets * (1-state.f),
+		prob: state.prob * 0.5,
+		f: state.f,
+		goal: state.goal,
+		flipsLeft: state.flipsLeft - 1
+	};
+
+	var probWin = probHitGoal(stateWin) + probHitGoal(stateLose);
+
+	return probWin;
 };
+
+// Note that win/loses order is communitivitive,
+// We can take advantage of this, only care about number of win/loses
+
+// for w wins and l losses, an = a0 * (1+2f)^w*(1-f)^l
+
+var buildBinomial = function(n) {
+	var bin = [];
+	var normalize = true;
+	var sum = 0;
+	for(var k = 0; k <= n; k++) {
+		if(k == 0 || k == n) {
+			bin[k] = 1;
+		} else {
+			var kTmp = k;
+			var diff = n - k;
+			if(k > diff) {
+				kTmp = diff;
+			}
+
+			var c = 1
+			for(var i = 0; i < k; i++) {
+				c = c * (n - i) / (i + 1);
+			}
+			bin[k] = c;
+		}
+		sum += bin[k];
+	}
+
+	if(normalize) {
+		for(var k = 0; k <= n; k++) {
+			bin[k] /= sum;
+		}
+	}
+	return bin;
+};
+
+var probHitGoalv2 = function(state) {
+	var prob = 0;
+	var numFlips = state.flipsLeft;
+	var biniomial = buildBinomial(numFlips);
+	var check = 0;
+	for(var numWin = 0; numWin <= numFlips; numWin++) {
+		var assets = state.assets * Math.pow(1+2*state.f,numWin) * Math.pow(1-state.f,numFlips - numWin);
+		check += biniomial[numWin];
+		// console.log(numWin,assets,biniomial[numWin]);
+		if(assets >= state.goal) {
+			prob += biniomial[numWin];
+		}
+	}
+	// console.log(check);
+	return prob;
+};
+
 
 var state = {
 	assets: 1,
 	prob: 1,
-	f: 0.5,
+	f: 0.16,
 	goal: 1000000000,
-	flipsLeft: 10
+	flipsLeft: 1000
 };
 
-playGame(state);
+
+// console.log(buildBinomial(2))
+
+
+// Solved for max f by trial and error, seems to be very smooth max
+var prob = probHitGoalv2(state);
+console.log(prob);
+
+
