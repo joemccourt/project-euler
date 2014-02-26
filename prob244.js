@@ -31,6 +31,10 @@
 //Found a solution at 32 moves
 //Upper limit of 4^32 paths ~ 2E19
 
+// Example check sum addition ?
+// Each checksum likely, but not guaranteed to be unique
+
+
 var start = [
 	2,0,1,1,
 	0,0,1,1,
@@ -47,9 +51,10 @@ var visited = {};
 var numPathsToState = {};
 var stateQueue = [];
 var numPaths = 0;
+
 var search = function(state,path) {
 
-	stateQueue.push({s:state.slice(0),p:path});
+	stateQueue.push({s:state.slice(0),p:path,paths:[path]});
 
 	while(stateQueue.length > 0) {
 		state = stateQueue.shift();
@@ -79,10 +84,34 @@ var search = function(state,path) {
 		//Tmp to speed up search
 		//removes some paths
 		if(visited[stateHash]) {
-			continue;
+			if(visited[stateHash].pathLength == state.p.length) {
+				var states = visited[stateHash].states;
+
+				if(states.indexOf(state) < 0) {
+					var lastState = states[states.length-1];
+					states.push(state);
+
+					//Replace in queue so only last one found is run
+					stateQueue[stateQueue.indexOf(lastState)] = state;
+					continue;
+				} else {
+					for(var i = 0; i < states.length; i++) {
+						if(state != states[i]) {
+							state.paths = state.paths.concat(states[i].paths);
+						}
+					}
+					// if(state.p.length < 10) {
+					// 	console.log(states.length,state.paths.length,state.paths);
+					// }
+				}
+			} else {
+				continue;
+			}
 		} else {
 			// console.log(stateHash)
-			visited[stateHash] = state.p.length;
+			visited[stateHash] = {pathLength:state.p.length,states:[state]};
+			stateQueue.push(state);
+			continue;
 		}
 
 		// && visited[stateHash] < state.p.length
@@ -93,6 +122,8 @@ var search = function(state,path) {
 		if(goalDiff == 0) {
 			console.log("Hit goal!");
 			console.log(state.p.length,state.p);
+			console.log(stateHash);
+			console.log(state.paths);
 			numPaths++;
 			continue;
 		}
@@ -106,28 +137,44 @@ var search = function(state,path) {
 		// Move up
 		var newState;
 		if(moveX != 0) {
+			var newPathsR = [];
+			for(var i = 0; i < state.paths.length; i++) {
+				newPathsR[i] = state.paths[i] + "R";
+			}
 			newState = state.s.slice(0);
 			newState[4*(moveY)+moveX] = state.s[4*(moveY)+moveX-1];
 			newState[4*(moveY)+moveX-1] = 2;
-			stateQueue.push({s:newState,p:state.p+"R"});
+			stateQueue.push({s:newState,p:state.p+"R",paths:newPathsR});
 		}
 		if(moveY != 0) {
+			var newPathsD = [];
+			for(var i = 0; i < state.paths.length; i++) {
+				newPathsD[i] = state.paths[i] + "D";
+			}
 			newState = state.s.slice(0);
 			newState[4*(moveY)+moveX] = state.s[4*(moveY-1)+moveX];
 			newState[4*(moveY-1)+moveX] = 2;
-			stateQueue.push({s:newState,p:state.p+"D"});
+			stateQueue.push({s:newState,p:state.p+"D",paths:newPathsD});
 		}
 		if(moveY != 3) {
+			var newPathsU = [];
+			for(var i = 0; i < state.paths.length; i++) {
+				newPathsU[i] = state.paths[i] + "U";
+			}
 			newState = state.s.slice(0);
 			newState[4*(moveY)+moveX] = state.s[4*(moveY+1)+moveX];
 			newState[4*(moveY+1)+moveX] = 2;
-			stateQueue.push({s:newState,p:state.p+"U"});
+			stateQueue.push({s:newState,p:state.p+"U",paths:newPathsU});
 		}
 		if(moveX != 3) {
+			var newPathsL = [];
+			for(var i = 0; i < state.paths.length; i++) {
+				newPathsL[i] = state.paths[i] + "L";
+			}
 			newState = state.s.slice(0);
 			newState[4*(moveY)+moveX] = state.s[4*(moveY)+moveX+1];
 			newState[4*(moveY)+moveX+1] = 2;
-			stateQueue.push({s:newState,p:state.p+"L"});
+			stateQueue.push({s:newState,p:state.p+"L",paths:newPathsL});
 		}
 	}
 };
@@ -135,8 +182,32 @@ var search = function(state,path) {
 
 search(start,"");
 
-console.log(numPaths)
 
+// // Find all path checksums here
+// var pathSolution = visited["2101101001011010"].paths[0];
+// var solutionPaths = [pathSolution];
+// var pathSolutionStart = pathSolution;
+// var pathSolutionEnd = "";
 
+// while(pathSolutionStart.length > 0) {
+// 	pathSolutionStart = pathSolution.substr(0,pathSolutionStart.length-1);
+// 	pathSolutionEnd = pathSolution.substr(pathSolutionStart.length);
+	
+// 	var moveRev = pathSolution[pathSolutionStart.length];
+// 	// var moveX = 0;
+// 	// var moveY = 0;
+// 	// var stateHash = "";
+// 	// for(var y = 0; y < 4; y++) {
+// 	// 	for(var x = 0; x < 4; x++) {
+// 	// 		var index = 4*y+x;
+// 	// 		if(state.s[index] == 2) {
+// 	// 			moveX = x;
+// 	// 			moveY = y;
+// 	// 		}
 
+// 	// 		stateHash += state.s[index];
+// 	// 	}
+// 	// }
 
+// 	console.log(pathSolutionStart,pathSolutionEnd);
+// }
