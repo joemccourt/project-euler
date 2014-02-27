@@ -34,6 +34,25 @@
 // Example check sum addition ?
 // Each checksum likely, but not guaranteed to be unique
 
+var checksumPath = function(path) {
+	var checksum = 0;
+	while(path.length) {
+		var m = 0;
+		if(path[0] == "L") {
+			m = 76
+		} else if(path[0] == "R") {
+			m = 82
+		} else if(path[0] == "U") {
+			m = 85
+		} else if(path[0] == "D") {
+			m = 68;
+		}
+
+		checksum = (checksum * 243 + m) % 100000007;
+		path = path.substr(1);
+	}
+	return checksum;
+};
 
 var start = [
 	2,0,1,1,
@@ -182,9 +201,9 @@ var search = function(state,path) {
 
 search(start,"");
 
-
+var pathSolution = visited["2101101001011010"].states[0].paths[0];
+console.log(checksumPath(pathSolution));
 // // Find all path checksums here
-// var pathSolution = visited["2101101001011010"].paths[0];
 // var solutionPaths = [pathSolution];
 // var pathSolutionStart = pathSolution;
 // var pathSolutionEnd = "";
