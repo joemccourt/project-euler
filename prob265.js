@@ -28,14 +28,51 @@
 //Binary rotation is the same as *2 + topmost bit
 //
 
-var num0 = 1;
-var num = num0;
+// var num0 = 1;
+// var num = num0;
 
-for(var rot = 0; rot < 8; rot++) {
-	num = (num << 1);
-	if(num > 255) {
-		num -= 255;
+// for(var rot = 0; rot < 8; rot++) {
+// 	num = (num << 1);
+// 	if(num > 255) {
+// 		num -= 255;
+// 	}
+// 	console.log(num);
+// }
+
+var N = 5;
+var N2 = Math.pow(2,N);
+var subs = [];
+
+for(var i = 0; i < N2; i++) {
+	var binStr = i.toString(2);
+	while(binStr.length < 3) {
+		binStr = "0"+binStr;
 	}
-	console.log(num);
+	subs.push(binStr);
 }
 
+console.log(subs);
+
+var connects = {};
+
+for(var i = 0; i < N2; i++) {
+	var sub = subs[i];
+	connects[sub] = [];
+	for(var j = 0; j < N2; j++) {
+		var subJ = subs[j];
+		if(j == i) {continue;}
+		var connectsRight = 0;
+		while(connectsRight < N) {
+			if(sub[connectsRight+1] == subJ[connectsRight]) {
+				connectsRight++;
+			} else {
+				break;
+			}
+		}
+
+		if(connectsRight == N-1) {
+			connects[sub].push(subJ);
+		}
+	}
+}
+console.log(connects);
