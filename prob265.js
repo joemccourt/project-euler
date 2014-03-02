@@ -45,7 +45,7 @@ var subs = [];
 
 for(var i = 0; i < N2; i++) {
 	var binStr = i.toString(2);
-	while(binStr.length < 3) {
+	while(binStr.length < N) {
 		binStr = "0"+binStr;
 	}
 	subs.push(binStr);
@@ -55,6 +55,7 @@ console.log(subs);
 
 var connects = {};
 
+//Really hackish... oh well
 for(var i = 0; i < N2; i++) {
 	var sub = subs[i];
 	connects[sub] = [];
@@ -76,3 +77,35 @@ for(var i = 0; i < N2; i++) {
 	}
 }
 console.log(connects);
+
+var pathSum = 0;
+var addPath = function(path) {
+	var pathCompact = path[0];
+	for(var k = 1; k < path.length-N+1; k++) {
+		pathCompact += path[k][N-1];
+	}
+	var pathValue = parseInt(pathCompact,2);
+	pathSum += pathValue;
+	console.log(pathCompact,pathValue);
+};
+
+var buildPaths = function(path) {
+	if(path.length == N2) {
+		addPath(path);
+		return;
+	}
+
+	var lastSub = path[path.length-1];
+	for(var k = 0; k < connects[lastSub].length; k++) {
+		var next = connects[lastSub][k];
+		if(path.indexOf(next) == -1) {
+			var nextPath = path.slice(0);
+			nextPath.push(next);
+			buildPaths(nextPath);
+		}
+	}
+}
+
+buildPaths([subs[0]]);
+
+console.log(pathSum);
