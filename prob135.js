@@ -1,5 +1,5 @@
 // Joe McCourt
-// Jan 18th, 2014
+// Mar 3rd, 2014
 // Project Euler problem 135
 // Same differences
 
@@ -43,15 +43,20 @@ var n = 1155;
 var y = 2;
 
 var count = 0;
-for(var n = 999856; n < 999857; n++) {
+for(var n = 0; n < 1000000; n++) {
 
 	// get n factors	
 	var factors = [1,n];
 	var limit = Math.ceil(Math.sqrt(n));
 	for(var i = 2; i <= limit; i++) {
 		if(n%i == 0) {
+
+			//if(factors.indexOf(i) != -1) {continue;}
 			factors.push(i);
-			factors.push(n/i);
+
+			if(i*i != n) {
+				factors.push(n/i);
+			}
 		}
 	}
 
@@ -67,7 +72,7 @@ for(var n = 999856; n < 999857; n++) {
 
 		if(Math.floor(d) == d && z > 0) {
 			numSolutions++;
-				console.log(x,y,z,x*x-y*y-z*z-n);
+			// console.log(x,y,z,x*x-y*y-z*z-n);
 			if(numSolutions > 10) {
 				break;
 			}
