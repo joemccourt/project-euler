@@ -25,13 +25,14 @@ var isReversable = function(n) {
 	}
 
 	if(n%10 == 0) {return false;}
-	while(n > 10) {
+	while(n >= 10) {
 		sum += (n%10) * maxPlace;
+		// console.log((n%10) * maxPlace);
 		n = Math.floor(n/10);
 		maxPlace /= 10;
 	}
 	sum += n;
-
+	// console.log(sum);
 	if(n == 0) {return false;}
 
 	while(sum > 10) {
@@ -46,7 +47,7 @@ var isReversable = function(n) {
 
 var count = 0;
 
-for(var i = 1; i < 10000000; i++) {
+for(var i = 1; i < 1000000000; i++) {
 	if(isReversable(i)) {
 		// console.log(i);
 		count++;
@@ -54,4 +55,4 @@ for(var i = 1; i < 10000000; i++) {
 }
 
 console.log(count);
-// console.log(isReversable(5))
+// console.log(isReversable(102))
