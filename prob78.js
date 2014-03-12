@@ -1,5 +1,6 @@
 // Joe McCourt
 // 12/2/2013
+// 3/11/2014
 
 // Project Euler problem 78
 // Let p(n) represent the number of different ways in which
@@ -137,41 +138,46 @@
 
 //Brute force plus memoiziation
 var limit = 1000000;
-var mem = {};
+var maxN = 120;
+var memo = [];
 
-var p = function(n,max,lvl){
+var p = function(n,max){
 	var sum = 0;
-	console.log(lvl+n+","+max);
-	if(max == 1 || max == 0){return 1;}
-	
-	if(max == n){
+	console.log(n+","+max);
+	var hash = maxN*n + max;
 
+	if(memo[hash]){
+		// console.log("hashed");
+		return memo[hash];
 	}
 
-	// var m = mem[n*100000 + max];
-	// if(m){return m;}
-
+	if(max == 1 || max == 0){memo[hash] = 1; return 1;}
+	
 	for(var i = max; i > 0; i--){
 		var newMax = i;
-		if(n-i < newMax){newMax = n-i;}
-		sum += p(n-i,newMax,lvl+" ");
+		if(n-i < i){newMax = n-i;}
+		sum += p(n-i,newMax);
 		sum %= limit;
 	}
 
-	mem[n*100000 + max] = sum;
+	memo[hash] = sum;
 	return sum;
 };
-	var numWays = p(5,5,"");
 
-// for(var i = 0; i <= 20; i++){
-// 	var numWays = p(i,i);
+// var numWays = p(5,5,"");
+// console.log(numWays);
 
-// 	console.log(i,numWays);
-// 	if(numWays == 0){
-// 		break;
-// 	}
-// }
 
+for(var i = 0; i < maxN; i++){
+	var numWays = p(i,i);
+
+	console.log(i,numWays);
+	if(numWays == 0){
+		break;
+	}
+}
+
+// console.log(memo);
 // print memo
 // for(var y = 1; y < 25; y++){
 // 	var log = "";
