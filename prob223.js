@@ -17,6 +17,10 @@
 // a*a - 1 = c*c - b*b
 // k = c*c - b*b
 // b*b = c*c - k
+
+// b = nb 
+
+
 // b*b = (b+dc)*(b+dc) - k
 // 0 = 2*b*dc + dc*dc - k
 // k = 2*b*dc + dc*dc
@@ -27,20 +31,52 @@
 // 
 
 // a + b + c <= p
-var limit = 100;
+var limit = 100; //100 -> 72
 var count = 0;
-for(var a = 1; a <= limit; a++) {
-	var k = a*a - 1;
-	for(var b = a; a+b <= limit; b++) {
-		var c = Math.sqrt(b*b+k);
-		if(Math.floor(c) == c) {
-			var p = a + b + c;
-			if(p <= limit) {
-				// console.log(a,b,c);
+// for(var a = 1; a <= limit; a++) {
+// 	var k = a*a - 1;
+// 	for(var b = a; a+b <= limit; b++) {
+// 		var c = Math.sqrt(b*b+k);
+// 		if(Math.floor(c) == c) {
+// 			var p = a + b + c;
+// 			if(p <= limit) {
+// 				// console.log(a,b,c);
+// 				count++;
+// 			}
+// 		}
+// 	}
+// }
+var ks = [];
+for(var k = 0; k <= limit; k++) {
+	ks.push(k*k-1);
+}
+
+for(var cb = 1; cb <= limit; cb++) {
+
+	var ki = 2;
+	var k = ks[ki];
+	var n = 1;
+	while(ki < cb && ki + cb <= limit) {
+
+		if(cb%2==0) {
+			n = k / cb / 2;
+			if(Math.floor(n) == n) {
+				console.log(n,cb,ki)
+				count++;
+			}
+		} else {
+			n = (k / cb + 1) / 2;
+			if(Math.floor(n) == n) {
+				console.log(n,cb,ki)
 				count++;
 			}
 		}
+
+
+		ki++;
+		k = ks[ki];
 	}
+
 }
 
 console.log(count);
