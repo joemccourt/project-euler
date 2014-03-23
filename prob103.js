@@ -63,16 +63,83 @@
 // S(A) - k0 >= 2^n - 1
 
 // S(A) >= n*k0 + n(n-1)/2
+var isValid = function(k) {
+	var unique = {};
+	var maxNum = [];
+	var limit = Math.pow(2,k.length);
+	for(var i = 1; i < limit; i++) {
+		var sum = 0;
+		var num = 0;
+		for(var j = 0; j < k.length; j++) {
+			if(i & (1 << j)) {
+				sum += k[j];
+				num++;
+			}
+		}
+		if(unique[sum]) {
+			return false;
+		}
+		unique[sum] = true;
 
+		if(num > 1 && sum < maxNum[num-1]) {return false;}
+		if(sum > maxNum[num]) {maxNum[num] = sum;}
+	}
+
+	return true;
+}
+
+var minSum = 10000000;
 var searchSet = function(k) {
 	if(k.length == 0) {
-		for(var k0 = 11; k0 < 20; k0++) {
+		for(var k0 = 1; k0 < 20; k0++) {
 			if(searchSet([k0])) {
 				return;
 			}
-		}	
+		}
+		return;
 	}
 
-	// for(var i = 1; i <)
+	if(k.length == 7) {
+		var sum = k[0]+k[1]+k[2]+k[3]+k[4]+k[5]+k[6];
+		if(sum < minSum) {
+			minSum = sum;
+			console.log(k,sum);
+			}
+		}
+	if(k.length > 7) {return;}
+
+	for(var dx = 1; dx < 15; dx++) {
+		var kNew = k.slice(0);
+		kNew[k.length] = k[k.length-1]+dx;
+		if(isValid(kNew)) {
+			if(searchSet(kNew))
+			{
+				return;
+			}
+		}
+	}
+	// for(var i = 1; i < k.length; i++) {
+
+	// }
 };
 searchSet([]);
+
+
+
+// n = 1: {1}
+// n = 2: {1, 2}
+// n = 3: {2, 3, 4}
+// n = 4: {3, 5, 6, 7}
+// n = 5: {6, 9, 11, 12, 13}
+// n = 6: {11, 18, 19, 20, 22, 25}
+
+// console.log(isValid([11, 18, 19, 20, 22, 25]))
+
+// deltas:
+// 1:
+// 1: 1
+// 2: 1 1
+// 3: 2 1 1
+// 6: 3 2 1 1
+//11: 7 1 1 2 3
+
