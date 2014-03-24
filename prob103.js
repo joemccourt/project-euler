@@ -66,32 +66,46 @@
 var isValid = function(k) {
 	var unique = {};
 	var maxNum = [];
+	var minNum = [];
 	var limit = Math.pow(2,k.length);
 	for(var i = 1; i < limit; i++) {
+		// console.log(maxNum)
 		var sum = 0;
 		var num = 0;
+		var vec = [];
 		for(var j = 0; j < k.length; j++) {
+			vec[j] = 0;
 			if(i & (1 << j)) {
 				sum += k[j];
 				num++;
+				vec[j] = 1;
 			}
 		}
+
+		// console.log(i,sum,vec);
 		if(unique[sum]) {
 			return false;
 		}
 		unique[sum] = true;
 
-		if(num > 1 && sum < maxNum[num-1]) {return false;}
-		if(sum > maxNum[num]) {maxNum[num] = sum;}
+		// if(num > 1 && sum < maxNum[num-1]) {return false;}
+		// if(num < k.length && maxNum[num+1] > 0 && sum > maxNum[num+1]) {return false;}
+		if(!maxNum[num] || sum > maxNum[num]) {maxNum[num] = sum;}
+		if(!minNum[num] || sum < minNum[num]) {minNum[num] = sum;}
 	}
 
+	for(var j = 1; j < k.length; j++) {
+		if(maxNum[j] >= minNum[j+1]) {return false;}
+	}
+
+	// console.log(maxNum,minNum);
 	return true;
 }
 
 var minSum = 10000000;
 var searchSet = function(k) {
 	if(k.length == 0) {
-		for(var k0 = 1; k0 < 20; k0++) {
+		for(var k0 = 20; k0 <= 20; k0++) {
 			if(searchSet([k0])) {
 				return;
 			}
@@ -133,7 +147,10 @@ searchSet([]);
 // n = 5: {6, 9, 11, 12, 13}
 // n = 6: {11, 18, 19, 20, 22, 25}
 
-// console.log(isValid([11, 18, 19, 20, 22, 25]))
+// console.log(isValid([1, 6, 12, 24, 34, 48, 62])) //false
+// console.log(isValid([11, 18, 19, 20, 22, 25])) //true
+// console.log(isValid([8, 21, 30, 32, 34, 46, 60 ])) //false
+// console.log(isValid([20, 21, 22, 30, 40, 44, 58 ])) //false
 
 // deltas:
 // 1:
