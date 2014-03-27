@@ -50,3 +50,75 @@
 // a+b+c != a+c+d
 
 // a+c+d != a+b+d
+
+var knownMap = {};
+var reduceSubsets = function(setA, setB, comp) {
+	// console.log(setA,setB);
+	if(setA.length == 0) {return true;}
+	for(var i = 0; i < setA.length; i++) {
+		for(var j = 0; j < setB.length; j++) {
+
+			if(setA[i] == setB[j]) {
+				var subsetA = setA.slice(0,i).concat(setA.slice(i+1));
+				var subsetB = setB.slice(0,j).concat(setB.slice(j+1));
+				return reduceSubsets(subsetA,subsetB,comp);
+			} else if(comp <= 0 && setA[i] < setB[j]) {
+				comp = -1;
+				var subsetA = setA.slice(0,i).concat(setA.slice(i+1));
+				var subsetB = setB.slice(0,j).concat(setB.slice(j+1));
+				return reduceSubsets(subsetA,subsetB,comp);
+			} else if(comp >= 0 && setA[i] > setB[j]) {
+				comp = 1;
+				var subsetA = setA.slice(0,i).concat(setA.slice(i+1));
+				var subsetB = setB.slice(0,j).concat(setB.slice(j+1));
+				return reduceSubsets(subsetA,subsetB,comp);
+			}
+		}
+	}
+
+	var hash = setA.toString() + ":" + setB.toString();
+	if(knownMap[hash]) {console.log(hash);return true; }
+	knownMap[hash] = true;
+
+	return false;
+};
+
+
+var getSubsets = function(n) {
+	var subsets = [];
+	var limit = Math.pow(2,n);
+	for(var i = 1; i < limit; i++) {
+		// console.log(maxNum)
+		var set = [];
+		for(var j = 0; j < n; j++) {
+			if(i & (1 << j)) {
+				set.push(j);
+			}
+		}
+		subsets[i-1] = set;
+	}
+
+	return subsets;
+};
+
+var subsets = getSubsets(7);
+// console.log(subsets);
+var count = 0;
+for(var i = 0; i < subsets.length; i++) {
+	for(var j = i+1; j < subsets.length; j++) {
+		var setI = subsets[i];
+		var setJ = subsets[j];
+		if(setI.length == setJ.length) {
+			// console.log(setI,setJ);
+			if(!reduceSubsets(setI,setJ,0)) {
+				count++;
+			}
+		}
+	}
+}
+
+console.log(count);
+
+// console.log(reduceSubsets([1,1,5],[1,2,3],0));
+// console.log(reduceSubsets([1,3,7,8,9],[2,3,4,1,5]));
+
