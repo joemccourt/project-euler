@@ -57,18 +57,19 @@ matrix = [[  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 169,
 [815, 559, 813, 459, 522, 788, 168, 586, 966, 232, 308, 833, 251, 631, 107],
 [813, 883, 451, 509, 615,  77, 281, 613, 459, 205, 380, 274, 302,  35, 805]];
 
-function getMax(matrix, index, sum, maxSum, usedV) {
+
+function getMax(matrix, index, sum, maxSum, usedV, maxV) {
 	
 	var n = matrix.length;
 	if(index >= n) {return sum;}
-	if(sum + (n - index)*1000 < maxSum) {return sum;}
+	if(sum + maxV[index] < maxSum) {return sum;}
 
 	for(var i = 0; i < n; i++) {
 		if(!usedV[i]) {
 			newUsedV = usedV.slice(0);
 			newUsedV[i] = 1;
 
-			var tmpSum = getMax(matrix, index+1, sum+matrix[i][index], maxSum, newUsedV);
+			var tmpSum = getMax(matrix, index+1, sum+matrix[i][index], maxSum, newUsedV, maxV);
 			if(tmpSum > maxSum) {
 				maxSum = tmpSum;
 			}
@@ -78,11 +79,14 @@ function getMax(matrix, index, sum, maxSum, usedV) {
 	return maxSum;
 };
 
+var answer = [];
+for(var i = 0; i < matrix.length; i++) {
+	answer[i] = (matrix.length - i) * 1000;
+}
 
-var answer = getMax(matrix, 0, 0, 0, [0,0,0,0,0]);
+for(var i = matrix.length - 1; i >= 0; i--) {
+	answer[i] = getMax(matrix, i, 0, 0, [0,0,0,0,0], answer);
+}
+
 console.log(answer);
-
-
-
-
 
