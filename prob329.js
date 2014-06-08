@@ -67,15 +67,66 @@ var primeMap = genPrimes(500);
 
 
 
-var takeStep = function() {
+var takeStep = function(k) {
 	var newState = copyState();
 
-	newState[500].p = 9009;
+	for(var i = 1; i <= 500; i++) {
+		var p = state[i].p;
+		var q = state[i].q;
 
+		var onPrime = primeMap[i] == true;
+
+		var pMul = onPrime ? 2 : 1;
+		if(sequence[k] == 'N') {
+			pMul = onPrime ? 1 : 2;
+		}
+
+		pMul *= state[i].p;
+
+		if(i == 1) {
+			newState[2].p += 2 * pMul;
+		} else {
+			newState[i-1].p += 1 * pMul;
+		}
+
+		if(i == 500) {
+			newState[499].p += 2 * pMul;
+		} else {
+			newState[i+1].p += 1 * pMul;
+		}
+	}
+
+	state = newState;
 };
 
+var sequence = ["P","P","P","P","N","N","P","P","P","N","P","P","N","P","N"]
 genStates();
-takeStep();
-console.log(state);
+
+for(var i = 0; i < sequence.length; i++) {
+	takeStep(i);
+}
+
+var count = 0;
+for(var i = 1; i < state.length; i++) {
+	count += state[i].p;
+}
+
+
+var q = Math.pow(2*2*2*3*5*5*5,sequence.length);
+
+var qExp = [2,3,5];
+var qCount = [2 + sequence.length, sequence.length, 3];
+
+var reducing = true;
+for(var i = 0; i < qExp.length; i++) {
+	while(count % qExp[i] == 0 && qCount[i] > 0) {
+		count /= qExp[i];
+		qCount[i]--;
+	}
+}
+
+var q = Math.pow(qExp[0], qCount[0]) * Math.pow(qExp[1], qCount[1]) * Math.pow(qExp[2], qCount[2]);
+
+console.log(count,q,qCount);
 
 // console.log(primeMap);
