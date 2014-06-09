@@ -24,6 +24,13 @@
 // Give your answer as a fraction p/q in reduced form. 
 
 
+// On each square, 1/2 chance going left, 1/2 go right
+// Except on 1 2/2 chance of going right and
+// Excpet on 500 2/2 chance of going left
+// If Prime, 2/3 "P", 1/3 "N"
+// If not Prime, 1/3 "P", 2/3 "N"
+
+
 function isPrime(number){
 	if(number <= 1){return false;}
 	if(number == 2){return true;}
@@ -52,8 +59,15 @@ var genStates = function() {
 	for(var i = 1; i <= 500; i++) {
 		state[i] = {p:1,q:500};
 	}
-}
+};
 
+var newBlankState = function() {
+	var newState = []
+	for(var i = 1; i <= 500; i++) {
+		newState[i] = {p:0,q:500};
+	}
+	return newState;
+};
 
 var copyState = function() {
 	var newState = [];
@@ -68,7 +82,7 @@ var primeMap = genPrimes(500);
 
 
 var takeStep = function(k) {
-	var newState = copyState();
+	var newState = newBlankState();
 
 	for(var i = 1; i <= 500; i++) {
 		var p = state[i].p;
@@ -84,13 +98,13 @@ var takeStep = function(k) {
 		pMul *= state[i].p;
 
 		if(i == 1) {
-			newState[2].p += 2 * pMul;
+			newState[2].p += 1 * pMul;
 		} else {
 			newState[i-1].p += 1 * pMul;
 		}
 
 		if(i == 500) {
-			newState[499].p += 2 * pMul;
+			newState[499].p += 1 * pMul;
 		} else {
 			newState[i+1].p += 1 * pMul;
 		}
@@ -100,6 +114,7 @@ var takeStep = function(k) {
 };
 
 var sequence = ["P","P","P","P","N","N","P","P","P","N","P","P","N","P","N"]
+// var sequence = ["P"];
 genStates();
 
 for(var i = 0; i < sequence.length; i++) {
@@ -111,13 +126,9 @@ for(var i = 1; i < state.length; i++) {
 	count += state[i].p;
 }
 
-
-var q = Math.pow(2*2*2*3*5*5*5,sequence.length);
-
 var qExp = [2,3,5];
 var qCount = [2 + sequence.length, sequence.length, 3];
 
-var reducing = true;
 for(var i = 0; i < qExp.length; i++) {
 	while(count % qExp[i] == 0 && qCount[i] > 0) {
 		count /= qExp[i];
@@ -127,6 +138,7 @@ for(var i = 0; i < qExp.length; i++) {
 
 var q = Math.pow(qExp[0], qCount[0]) * Math.pow(qExp[1], qCount[1]) * Math.pow(qExp[2], qCount[2]);
 
-console.log(count,q,qCount);
+// console.log(state);
+console.log(count,q,qCount, count/q);
 
 // console.log(primeMap);
