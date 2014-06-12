@@ -36,15 +36,17 @@ var f = function(n) {
 
 var fFast = function(n) {
 
-	for(var i = 0; i < validNumbers.length; i++) {
-		var m = validNumbers[i];
-		if(m % n == 0) {
-			return m;
+	for(var k = 1; k <= 16; k++) {
+		for(var i = 0; i < validNumbersMap[k].length; i++) {
+			var m = validNumbersMap[k][i];
+			if(m % n == 0) {
+				return m;
+			}
 		}
 	}
 
 	console.log("oooops",n);
-	return -1;
+	return 0;
 };
 
 var validNumbersMap = {};
@@ -62,57 +64,103 @@ var numArrayToNumber = function(array) {
 	return num;
 };
 
-var genValid = function(numArray, index, first) {
-	// if(index >= numArray.length) {return;}
-	// console.log(numArray);
-	var num = numArrayToNumber(numArray);
-	validNumbersMap[num] = true;
+// var foo = 0;
+// var genValid = function(numArray, index, first) {
+// 	foo++;
+// 	// if(index >= numArray.length) {return;}
+// 	// console.log(numArray);
+// 	var num = numArrayToNumber(numArray);
+// 	validNumbersMap[num] = true;
 
-	if(!validNumbersIndexMap[num]) {
-		validNumbersIndexMap[num] = -1;
+// 	if(!validNumbersIndexMap[num]) {
+// 		validNumbersIndexMap[num] = -1;
+// 	}
+
+// 	if(validNumbersMap[num] && validNumbersIndexMap[num] >= index && num != 0) {
+// 		return;
+// 	}
+
+// 	if(index > validNumbersMap[num]) {
+// 		validNumbersIndexMap[num] = index;
+// 	}
+
+// 	for(var k = numArray[index]; k <= 2; k++) {
+// 		var numArrayCopy = numArray.slice(0);
+// 		numArrayCopy[index] = k;
+// 		genValid(numArrayCopy, index+1);
+// 	}
+// };
+
+// var start = [0,0,0,0,0,0,0,0,0,0,0];
+// var start = [0,0,0,0,0,0,0,0,0,0,0];
+// genValid(start, 0, true);
+
+var genValid = function(n) {
+	var pow = 10;
+	var i = 1;
+
+	while(i < n) {
+		if(!validNumbersMap[i+1]) {
+			validNumbersMap[i+1] = [];
+		}
+
+		for(var k = 1; k <= 2; k++) {
+
+			//For zeros
+			for(var p = 0; p < i; p++) {
+				for(var vI = 0; vI < validNumbersMap[p].length; vI++) {
+					var num = k*pow + validNumbersMap[p][vI];
+					validNumbersMap[i+1].push(num);
+				}
+			}
+
+			for(var vI = 0; vI < validNumbersMap[i].length; vI++) {
+				var num = k*pow + validNumbersMap[i][vI];
+				validNumbersMap[i+1].push(num);
+			}
+		}
+
+		pow *= 10;
+		i++;
 	}
 
-	if(validNumbersMap[num] && validNumbersIndexMap[num] >= index && num != 0) {
-		return;
-	}
-
-	if(index > validNumbersMap[num]) {
-		validNumbersIndexMap[num] = index;
-	}
-
-	for(var k = numArray[index]; k <= 2; k++) {
-		var numArrayCopy = numArray.slice(0);
-		numArrayCopy[index] = k;
-		genValid(numArrayCopy, index+1);
-	}
 };
 
-var start = [0,0,0,0,0,0,0,0,0,0];
-// var start = [0,0,0,0,0,0,0,0,0,0,0];
-genValid(start, 0, true);
+var validNumbersMap = {
+	0:[0],
+	1:[1,2]
+};
 
-var validNumbers = [];
-for(var n in validNumbersMap) {
-	if(parseInt(n) > 0) {
-		validNumbers.push(parseInt(n));
-	}
+var n = 16;
+genValid(n);
+// console.log(validNumbersMap);
+
+for(var i = 1; i <= n; i++) {
+	validNumbersMap[i].sort(function(a,b){return a > b ? 1 : -1;})
+	
+	// for(var j = 0; j < validNumbersMap[i].length; j++) {
+	// 	validNumbers.push(validNumbersMap[i][j]);
+	// }
 }
 
-validNumbers.sort(function(a,b){return a > b ? 1 : -1;})
 
-console.log(validNumbers.length);
+// console.log(validNumbers.length, foo);
 // console.log(validNumbers)
 
-var sum = 0;
-for(var i = 1; i <= 300; i++) {
+// var sum = 0;
+// for(var i = 1; i <= 10000; i++) {
 
-	// if(fFast(i) != f(i)) {
-	// 	console.log("error",fFast(i), f(i));
-	// }
-	sum += fFast(i)/i;
-}
+// 	// if(fFast(i) != f(i)) {
+// 	// 	console.log("error",fFast(i), f(i));
+// 	// }
+// 	sum += fFast(i)/i;
+// }
 
-// 300 -> 20937570
-console.log(sum);
+// // 300 -> 20937570
+// // 10000 -> 314548450057 + f(4995)/4995 + f(9990)/9990 + f(9999)/9999
+// console.log(sum);
 
 console.log(fFast(89))
+console.log(fFast(9999)/9999)
+console.log(fFast(9990)/9990)
+console.log(fFast(4995)/4995)
