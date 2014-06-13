@@ -13,6 +13,7 @@
 
 // Find sum of f(n) / n from 1 to 10000.
 
+var digits = 3;
 
 var isValid = function(n) {
 	while(n >= 1) {
@@ -36,7 +37,7 @@ var f = function(n) {
 
 var fFast = function(n) {
 
-	for(var k = 1; k <= 16; k++) {
+	for(var k = 1; k <= digits; k++) {
 		for(var i = 0; i < validNumbersMap[k].length; i++) {
 			var m = validNumbersMap[k][i];
 			if(m % n == 0) {
@@ -131,7 +132,7 @@ var validNumbersMap = {
 	1:[1,2]
 };
 
-var n = 16;
+var n = digits;
 genValid(n);
 // console.log(validNumbersMap);
 
@@ -160,7 +161,26 @@ for(var i = 1; i <= n; i++) {
 // // 10000 -> 314548450057 + f(4995)/4995 + f(9990)/9990 + f(9999)/9999
 // console.log(sum);
 
-console.log(fFast(89))
-console.log(fFast(9999)/9999)
-console.log(fFast(9990)/9990)
-console.log(fFast(4995)/4995)
+// console.log(fFast(9)/9)
+// console.log(fFast(99)/99)
+// console.log(fFast(999)/999)
+// console.log(fFast(9999)/9999) // :(
+
+
+//Pattern for repeating 9's
+// 12222
+// 1122222222
+// 111222222222222
+// 11112222222222222222
+
+// 1358
+// 11335578
+// 111333555778
+// 1111333355557778
+
+// console.log(11112222222222222222/9999)
+
+console.log(314548450057 + 222667111556 + 111333555778 + 1111333355557778)
+
+// console.log(fFast(9990)/9990) // 111333555778
+// console.log(fFast(4995)/4995) // 222667111556
