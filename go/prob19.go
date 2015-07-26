@@ -1,4 +1,3 @@
-
 // You are given the following information, but you may prefer to do some research for yourself.
 
 // 1 Jan 1900 was a Monday.
@@ -16,12 +15,12 @@ import (
 	"fmt"
 )
 
-func isLeapYear(y int) bool{
-	if y % 4 != 0 {
+func isLeapYear(y int) bool {
+	if y%4 != 0 {
 		return false
 	}
 
-	if y % 100 == 0 && y % 400 != 0 {
+	if y%100 == 0 && y%400 != 0 {
 		return false
 	}
 
@@ -29,7 +28,7 @@ func isLeapYear(y int) bool{
 }
 
 func prob19() {
-	dim := []int{31,31,31,31,31,31,31,31,31,31,31,31}
+	dim := []int{31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31}
 	dim[8] = 30
 	dim[3] = 30
 	dim[5] = 30

@@ -13,11 +13,11 @@
 package main
 
 import (
-	"fmt"
 	"bytes"
-	"sort"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"sort"
 )
 
 func nameScore(s string) int {

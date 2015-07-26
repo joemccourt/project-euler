@@ -8,15 +8,15 @@ import (
 
 func main() {
 	problems := map[string]interface{}{
-		"1": prob1,
-		"2": prob2,
-		"3": prob3,
-		"4": prob4,
-		"5": prob5,
-		"6": prob6,
-		"7": prob7,
-		"8": prob8,
-		"9": prob9,
+		"1":  prob1,
+		"2":  prob2,
+		"3":  prob3,
+		"4":  prob4,
+		"5":  prob5,
+		"6":  prob6,
+		"7":  prob7,
+		"8":  prob8,
+		"9":  prob9,
 		"10": prob10,
 		"11": prob11,
 		"12": prob12,
@@ -43,5 +43,5 @@ func main() {
 	problems[prob].(func())()
 
 	delta := time.Since(start)
-	fmt.Println("Duration:", delta.Nanoseconds() / 1e6, "ms")
+	fmt.Println("Duration:", delta.Nanoseconds()/1e6, "ms")
 }

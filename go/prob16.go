@@ -17,7 +17,6 @@
 // 0 0 0 4 0 9 6 19
 // 0 0 0 8 1 9 2 20
 
-
 // No obvious pattern other than ones col
 // Brute force
 
@@ -37,7 +36,7 @@ func (b BigNumber) Set(value int) BigNumber {
 }
 
 func (b BigNumber) BigExtend(atLeast int) BigNumber {
-	newB := make(BigNumber, 2 * atLeast)
+	newB := make(BigNumber, 2*atLeast)
 	copy(newB, b)
 	return newB
 }
@@ -45,7 +44,7 @@ func (b BigNumber) BigExtend(atLeast int) BigNumber {
 func (b BigNumber) BigMul(g int) BigNumber {
 	c := 0
 	for i := 0; i < len(b); i++ {
-		d := g * int(b[i]) + c
+		d := g*int(b[i]) + c
 		c = 0
 
 		for d >= 10 {
@@ -56,7 +55,7 @@ func (b BigNumber) BigMul(g int) BigNumber {
 		b[i] = uint8(d)
 
 		if c > 0 && i+1 == len(b) {
-			b = b.BigExtend(1+len(b))
+			b = b.BigExtend(1 + len(b))
 		}
 	}
 	return b

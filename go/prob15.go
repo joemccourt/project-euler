@@ -4,7 +4,6 @@
 
 // How many such routes are there through a 20×20 grid?
 
-
 // 2x2
 // 6 3 1
 // 3 2 1
@@ -15,7 +14,6 @@
 // 10 6  3  1
 // 4  3  2  1
 // 1  1  1  1
-
 
 package main
 

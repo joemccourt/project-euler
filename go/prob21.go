@@ -19,7 +19,7 @@ func dOfN(n int) int {
 	d := 1
 	max := int(math.Sqrt(float64(n)))
 	for i := 2; i < max; i++ {
-		if n % i == 0 {
+		if n%i == 0 {
 			d += i + n/i
 		}
 	}
@@ -28,7 +28,7 @@ func dOfN(n int) int {
 }
 
 func prob21() {
-	
+
 	a := map[int]bool{}
 	sum := 0
 	for i := 2; i < 10000; i++ {
