@@ -28,9 +28,10 @@ func main() {
 		"18": prob18,
 		"19": prob19,
 		"20": prob20,
+		"21": prob21,
 	}
 
-	prob := "20"
+	prob := "21"
 	if len(os.Args) > 1 {
 		prob = os.Args[1]
 	}
