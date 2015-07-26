@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
@@ -32,6 +33,10 @@ func main() {
 	}
 
 	fmt.Println("Running problem:", prob)
+	start := time.Now()
 
 	problems[prob].(func())()
+
+	delta := time.Since(start)
+	fmt.Println("Duration:", delta.Nanoseconds() / 1e6, "ms")
 }
