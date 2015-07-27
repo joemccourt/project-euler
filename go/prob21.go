@@ -16,12 +16,20 @@ import (
 )
 
 func dOfN(n int) int {
+	if n <= 1 {
+		return 0
+	}
+
 	d := 1
-	max := int(math.Sqrt(float64(n)))
+	max := int(math.Ceil(math.Sqrt(float64(n))))
 	for i := 2; i < max; i++ {
 		if n%i == 0 {
 			d += i + n/i
 		}
+	}
+
+	if max*max == n {
+		d += max
 	}
 
 	return d
